@@ -1,0 +1,55 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'key'
+            keyPassword 'weixinxiang'
+            storeFile file('C:/Users/wxx/20170420.jks')
+            storePassword 'weixinxiang'
+        }
+    }
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
+    ''
+    defaultConfig {
+        applicationId "com.lib.lapp"
+        minSdkVersion 19
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.config
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.config
+        }
+    }
+    productFlavors {
+    }
+    sourceSets { main { res.srcDirs = ['src/main/res', 'src/main/res/png'] } }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile files('libs/okhttp-3.6.0.jar')
+    compile files('libs/okio-1.11.0.jar')
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    testCompile 'junit:junit:4.12'
+    androidTestCompile 'org.testng:testng:6.9.6'
+    androidTestCompile 'junit:junit:4.12'
+    compile 'com.github.markushi:circlebutton:1.1' //圆形按钮外部依赖
+    testCompile 'org.mockito:mockito-core:1.10.19' //单元测试外部依赖
+    compile files('libs/fengmap-2.0.10.jar')
+    compile 'com.yuyh.bubble:library:1.0.0' //popupwindow外部依赖
+    compile 'com.google.code.gson:gson:2.6.2' //Gson处理Json数据
+}

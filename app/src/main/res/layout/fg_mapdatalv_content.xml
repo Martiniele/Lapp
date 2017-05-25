@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_topbar"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/navigation_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/blue">
+
+        <TextView
+            android:id="@+id/txt_topbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="设施信息"
+            android:textColor="@color/text_topbar"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设施列表： "
+        android:textColor="#000000" />
+    <!-- 商品列表 -->
+    <com.lib.lapp.widget.RefreshableView
+        android:id="@+id/refreshable_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+    <ListView
+        android:id="@+id/list_goods"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:divider="#33000000"
+        android:dividerHeight="1px"/>
+
+    </com.lib.lapp.widget.RefreshableView>
+</LinearLayout>
