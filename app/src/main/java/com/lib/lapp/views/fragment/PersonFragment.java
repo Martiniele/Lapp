@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.lib.lapp.R;
 import com.lib.lapp.model.WifiInfo;
@@ -25,12 +26,13 @@ public class PersonFragment extends BaseFragment {
     private Button net_btn;
     private TextView txt_content;
     private Toast toast;
+
     public PersonFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fg_persondata_content,container,false);
+        View view = inflater.inflate(R.layout.fg_persondata_content, container, false);
         txt_content = (TextView) view.findViewById(R.id.txt_content_2);
         net_btn = (Button) view.findViewById(R.id.net_btn);
         net_btn.setOnClickListener(new View.OnClickListener() {
@@ -42,17 +44,17 @@ public class PersonFragment extends BaseFragment {
         return view;
     }
 
-    Handler handler = new Handler(){
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String val = data.getString("value");
             Gson gson = new Gson();
-            Map<String,String> map = gson.fromJson(val,Map.class);
+            Map<String, String> map = gson.fromJson(val, Map.class);
             String result = null;
             result = map.get("message");
-            toast = Toast.makeText(getContext(),result,Toast.LENGTH_LONG);
+            toast = Toast.makeText(getContext(), result, Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         }
@@ -68,18 +70,19 @@ public class PersonFragment extends BaseFragment {
             info.setWifi_ssid("Library");
             info.setWifi_bssid("as:21:e3:88:3j:e0");
             info.setWifi_rssi(-54);
-            AsyncNetUtils.getInstance().sendFormByPost(url,info, new AsyncNetUtils.StringCallBack() {
+            AsyncNetUtils.getInstance().sendFormByPost(url, info, new AsyncNetUtils.StringCallBack() {
                 @Override
                 public void onResponse(String response) {
                     Message msg = new Message();
                     Bundle data = new Bundle();
-                    data.putString("value",response);
+                    data.putString("value", response);
                     msg.setData(data);
                     handler.sendMessage(msg);
                 }
             });
         }
     };
+
     @Override
     public void fetchData() {
 

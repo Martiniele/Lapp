@@ -14,6 +14,7 @@ import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+
 import com.lib.lapp.R;
 import com.lib.lapp.widget.utils.KeyBoardUtils;
 
@@ -98,6 +99,7 @@ public class SearchBar extends LinearLayout implements TextView.OnEditorActionLi
 
     /**
      * 点击监听
+     *
      * @param listener 点击搜索结果监听
      */
     public void setOnItemClickListener(AdapterView.OnItemClickListener listener) {
@@ -106,6 +108,7 @@ public class SearchBar extends LinearLayout implements TextView.OnEditorActionLi
 
     /**
      * 设置适配器
+     *
      * @param adapter 搜索结果适配器
      */
     public <T extends ListAdapter & Filterable> void setAdapter(T adapter) {
@@ -119,6 +122,7 @@ public class SearchBar extends LinearLayout implements TextView.OnEditorActionLi
     public interface OnSearchResultCallback {
         /**
          * 搜索回调监听
+         *
          * @param keyword 关键字
          */
         public void onSearchCallback(String keyword);

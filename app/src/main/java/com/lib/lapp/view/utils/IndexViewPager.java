@@ -1,4 +1,5 @@
 package com.lib.lapp.view.utils;
+
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -10,9 +11,11 @@ import android.view.MotionEvent;
 
 public class IndexViewPager extends ViewPager {
     private boolean isCanScroll = false;
+
     public IndexViewPager(Context context) {
         super(context);
     }
+
     public IndexViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -28,6 +31,7 @@ public class IndexViewPager extends ViewPager {
 
     /**
      * 重载此方法防止页面侧滑
+     *
      * @param arg0
      * @return
      */
@@ -47,6 +51,7 @@ public class IndexViewPager extends ViewPager {
         // TODO Auto-generated method stub
         super.setCurrentItem(item, smoothScroll);
     }
+
     @Override
     public void setCurrentItem(int item) {
         // TODO Auto-generated method stub

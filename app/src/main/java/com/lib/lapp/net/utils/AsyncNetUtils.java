@@ -1,6 +1,7 @@
 package com.lib.lapp.net.utils;
 
 import java.io.IOException;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -9,7 +10,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
 import org.json.JSONObject;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -42,6 +45,7 @@ public class AsyncNetUtils {
 
     /**
      * 单例模式
+     *
      * @return
      */
     public static AsyncNetUtils getInstance() {
@@ -157,20 +161,22 @@ public class AsyncNetUtils {
 
     /**
      * 异步请求，请求返回Json字符串
+     *
      * @param url
      * @param callback
      */
-    public void asyncJsonStringByURL(String url, final StringCallBack callback){
+    public void asyncJsonStringByURL(String url, final StringCallBack callback) {
         final Request request = new Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
             }
+
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response != null && response.isSuccessful()){
-                    onSuccessJsonStringMethod(response.body().string(),callback);
+                if (response != null && response.isSuccessful()) {
+                    onSuccessJsonStringMethod(response.body().string(), callback);
                 }
             }
         });
@@ -178,10 +184,11 @@ public class AsyncNetUtils {
 
     /**
      * 异步请求，请求返回JSON对象
+     *
      * @param url
      * @param callback
      */
-    public void asyncJsonObjectByURL(final String url, final JsonCallBack callback){
+    public void asyncJsonObjectByURL(final String url, final JsonCallBack callback) {
         final Request request = new Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -191,8 +198,8 @@ public class AsyncNetUtils {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response != null && response.isSuccessful()){
-                    onSuccessJsonObjectMethod(response.body().string(),callback);
+                if (response != null && response.isSuccessful()) {
+                    onSuccessJsonObjectMethod(response.body().string(), callback);
                 }
             }
         });
@@ -201,10 +208,11 @@ public class AsyncNetUtils {
 
     /**
      * 异步请求，请求返回Byte 字节数组
+     *
      * @param url
      * @param callback
      */
-    public void asyncGetByteByURL(final String url, final ByteCallBack callback){
+    public void asyncGetByteByURL(final String url, final ByteCallBack callback) {
         final Request request = new Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -214,8 +222,8 @@ public class AsyncNetUtils {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response != null && response.isSuccessful()){
-                    onSuccessByteMethod(response.body().bytes(),callback);
+                if (response != null && response.isSuccessful()) {
+                    onSuccessByteMethod(response.body().bytes(), callback);
                 }
             }
         });
@@ -223,10 +231,11 @@ public class AsyncNetUtils {
 
     /**
      * 异步请求，返回图片
+     *
      * @param url
      * @param callback
      */
-    public void asyncDownloadImgByURL(String url, final BitmapCallBack callback){
+    public void asyncDownloadImgByURL(String url, final BitmapCallBack callback) {
         final Request request = new Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
@@ -236,10 +245,10 @@ public class AsyncNetUtils {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if(response != null && response.isSuccessful()){
+                if (response != null && response.isSuccessful()) {
                     byte[] data = response.body().bytes();
                     Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                    onSuccessImgMethod(bitmap,callback);
+                    onSuccessImgMethod(bitmap, callback);
                     //防止溢出异常
                     System.out.println(data.length);
                 }
@@ -254,7 +263,7 @@ public class AsyncNetUtils {
      * @param content
      * @param callback
      */
-    public void sendStringByPost(String url, String content, final JsonCallBack callback){
+    public void sendStringByPost(String url, String content, final JsonCallBack callback) {
         RequestBody requestBody = RequestBody.create(MEDIA_TYPE_MARKDOWN, content);
         Request request = new Request.Builder().url(url).post(requestBody).build();
         client.newCall(request).enqueue(new Callback() {
@@ -274,11 +283,12 @@ public class AsyncNetUtils {
 
     /**
      * 向服务器提交json字符串格式的数据
+     *
      * @param url
      * @param json
      * @param callback
      */
-    public void sendJsonStringByPost(String url, String json, final StringCallBack callback){
+    public void sendJsonStringByPost(String url, String json, final StringCallBack callback) {
         RequestBody requestBody = RequestBody.create(JSON, json);
         Request request = new Request.Builder().url(url).post(requestBody).build();
         client.newCall(request).enqueue(new Callback() {
@@ -297,23 +307,24 @@ public class AsyncNetUtils {
 
     /**
      * 提交表单
+     *
      * @param url
      * @param wifiInfo
      * @param callback
      */
-    public void sendFormByPost(String url, WifiInfo wifiInfo,final StringCallBack callback){
+    public void sendFormByPost(String url, WifiInfo wifiInfo, final StringCallBack callback) {
         RequestBody requestBody = new FormBody.Builder()
                 .add("x", String.valueOf(wifiInfo.getPos_x()))
                 .add("y", String.valueOf(wifiInfo.getPos_y()))
-                .add("bssid",wifiInfo.getWifi_bssid())
-                .add("ssid",wifiInfo.getWifi_ssid())
+                .add("bssid", wifiInfo.getWifi_bssid())
+                .add("ssid", wifiInfo.getWifi_ssid())
                 .add("rssi", String.valueOf(wifiInfo.getWifi_rssi()))
                 .build();
         Request request = new Request.Builder()
                 .url(url)
                 .addHeader("content-type", String.valueOf(JSON))
-                .addHeader("Home","China")
-                .addHeader("user-agent","Android")
+                .addHeader("Home", "China")
+                .addHeader("user-agent", "Android")
                 .post(requestBody)
                 .build();
         client.newCall(request).enqueue(new Callback() {
@@ -333,14 +344,17 @@ public class AsyncNetUtils {
     public interface StringCallBack {
         void onResponse(String response);
     }
+
     //网络访问字符数组回调接口
     public interface ByteCallBack {
         void onResponse(byte[] result);
     }
+
     //网络访问图片回调接口
     public interface BitmapCallBack {
         void onResponse(Bitmap bitmap);
     }
+
     //网络访问 Json对象回调接口
     public interface JsonCallBack {
         void onResponse(JSONObject jsonObject);

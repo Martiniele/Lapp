@@ -13,10 +13,8 @@ import android.widget.TextView;
 import com.lib.lapp.R;
 
 /**
- * @author ：程序员小冰
- * @新浪微博 ：http://weibo.com/mcxiaobing
- * @GitHub: https://github.com/QQ986945193
- * @CSDN博客: http://blog.csdn.net/qq_21376985
+ * @author wxx
+ * @Date 2017/04/12
  */
 
 public class DataloadUtils {
@@ -46,14 +44,11 @@ public class DataloadUtils {
         window.setAttributes(lp);
         window.setWindowAnimations(R.style.PopWindowAnimStyle);
         loadingDialog.show();
-
         return loadingDialog;
     }
 
     /**
      * 关闭dialog
-     *
-     * http://blog.csdn.net/qq_21376985
      *
      * @param mDialogUtils
      */

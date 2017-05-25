@@ -8,7 +8,10 @@ import android.view.View;
 
 public interface IMapViewFragment {
     public void openMapByPath(View view);
+
     public void openMapById(View view);
+
     public void initZoomComponent();
+
     public void init3DControllerComponent();
 }

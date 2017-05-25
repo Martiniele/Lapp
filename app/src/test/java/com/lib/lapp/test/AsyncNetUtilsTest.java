@@ -41,7 +41,7 @@ public class AsyncNetUtilsTest {
     }
 
     @Test
-    public void sendFormByPost() throws  Exception{
+    public void sendFormByPost() throws Exception {
         String url = "http://127.0.0.1:8080/LibServer/rssiaction.action";
         WifiInfo info = new WifiInfo();
         info.setPos_x(1278878);
@@ -49,11 +49,11 @@ public class AsyncNetUtilsTest {
         info.setWifi_ssid("wxxxxx");
         info.setWifi_bssid("as:21:e3:88:3j:e0");
         info.setWifi_rssi(-54);
-        AsyncNetUtils.getInstance().sendFormByPost(url,info, new AsyncNetUtils.StringCallBack() {
+        AsyncNetUtils.getInstance().sendFormByPost(url, info, new AsyncNetUtils.StringCallBack() {
             @Override
             public void onResponse(String response) {
                 System.out.println(response);
-                assertEquals("111","111");
+                assertEquals("111", "111");
             }
         });
     }

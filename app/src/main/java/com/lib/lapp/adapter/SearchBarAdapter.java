@@ -1,8 +1,10 @@
 package com.lib.lapp.adapter;
 
 import android.content.Context;
+
 import com.fengmap.android.map.marker.FMModel;
 import com.lib.lapp.R;
+
 import java.util.ArrayList;
 
 /**

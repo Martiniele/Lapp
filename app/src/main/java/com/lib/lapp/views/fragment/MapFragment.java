@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.fengmap.android.FMDevice;
 import com.fengmap.android.FMErrorMsg;
 import com.fengmap.android.FMMapSDK;
@@ -57,6 +58,7 @@ import com.lib.lapp.widget.SearchBar;
 import com.lib.lapp.widget.utils.AnalysisUtils;
 import com.lib.lapp.widget.utils.DataloadUtils;
 import com.lib.lapp.widget.utils.KeyBoardUtils;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
@@ -88,11 +90,11 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
     private boolean isPathCheck = false;
 
 
-    private Handler loadMaphandler = new Handler(){    //用于延迟加载的子线程
+    private Handler loadMaphandler = new Handler() {    //用于延迟加载的子线程
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case 10:
                     DataloadUtils.closeDialog(loadDialog);
                     break;
@@ -108,6 +110,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 加载Fragment页面
+     *
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -115,7 +118,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(view == null){
+        if (view == null) {
             view = inflater.inflate(R.layout.fg_map_view_content, container, false);
         }
         mMapView = (FMMapView) view.findViewById(R.id.mapview);
@@ -133,6 +136,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 地图加载成功时的回调处理
+     *
      * @param str
      */
     @Override
@@ -162,7 +166,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_locate, this);
         ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_view, this);
         ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_theme, this);
-        ViewHelper.setViewCheckedChangeListener(getActivity(),R.id.btn_path, this);
+        ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_path, this);
 
         //导航分析
         try {
@@ -197,9 +201,9 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
      */
     @Override
     public void fetchData() {
-        loadDialog = DataloadUtils.createLoadingDialog(getActivity(),"地图加载中...");
+        loadDialog = DataloadUtils.createLoadingDialog(getActivity(), "地图加载中...");
         openMapByPath(view);
-        loadMaphandler.sendEmptyMessageDelayed(10,2000);
+        loadMaphandler.sendEmptyMessageDelayed(10, 2000);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,6 +214,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 地图点击事件监听
+     *
      * @param x
      * @param y
      */
@@ -227,8 +232,8 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         if (stCoord == null) {
             clear();
             stCoord = mapCoordResult.getMapCoord();
-            Log.e("StartX------>",String.valueOf(stCoord.x));
-            Log.e("StartY------>",String.valueOf(stCoord.y));
+            Log.e("StartX------>", String.valueOf(stCoord.x));
+            Log.e("StartY------>", String.valueOf(stCoord.y));
             stGroupId = mapCoordResult.getGroupId();
             createStartImageMarker();
             return;
@@ -237,8 +242,8 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         // 终点
         if (endCoord == null) {
             endCoord = mapCoordResult.getMapCoord();
-            Log.e("EndX------>",String.valueOf(endCoord.x));
-            Log.e("EndY------>",String.valueOf(endCoord.y));
+            Log.e("EndX------>", String.valueOf(endCoord.x));
+            Log.e("EndY------>", String.valueOf(endCoord.y));
             endGroupId = mapCoordResult.getGroupId();
             createEndImageMarker();
         }
@@ -251,6 +256,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 搜索框事件监听回调
+     *
      * @param keyword 关键字
      */
     @Override
@@ -272,6 +278,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 搜索框搜索结果选项条事件监听
+     *
      * @param parent
      * @param view
      * @param position
@@ -322,7 +329,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         mFmap.setOnFMMapInitListener(this);
         mFmap.setOnFMMapClickListener(this);
         String mid = FileUtils.DEFAULT_MAP_ID;
-        mFmap.openMapById(mid,true);
+        mFmap.openMapById(mid, true);
     }
 
     /**
@@ -344,6 +351,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
                 //地图放大
                 mFmap.zoomIn();
             }
+
             @Override
             public void onZoomOut(View view) {
                 //地图缩小
@@ -354,6 +362,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 地图更新监听
+     *
      * @param fmMapUpgradeInfo
      * @return
      */
@@ -392,6 +401,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 地图加载失败时的回调处理
+     *
      * @param path
      * @param errorCode
      */
@@ -405,6 +415,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 在Fragment创建的时候申请SD卡读写权限
+     *
      * @param savedInstanceState
      */
     @Override
@@ -417,17 +428,18 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
             int p1 = this.getContext().checkSelfPermission(FMMapSDK.SDK_PERMISSIONS[0]);
             int p2 = this.getContext().checkSelfPermission(FMMapSDK.SDK_PERMISSIONS[1]);
             // 只要有任一权限没通过，则申请
-            if (p1 != PackageManager.PERMISSION_GRANTED || p2 != PackageManager.PERMISSION_GRANTED ) {
+            if (p1 != PackageManager.PERMISSION_GRANTED || p2 != PackageManager.PERMISSION_GRANTED) {
                 this.requestPermissions(FMMapSDK.SDK_PERMISSIONS,                //SDK所需权限数组
                         FMMapSDK.SDK_PERMISSION_RESULT_CODE);   //SDK权限申请处理结果返回码
             } else {
-                Log.d("Android 6.0 系统运行时权限申请", "onCreate: "+"权限已经拥有");
+                Log.d("Android 6.0 系统运行时权限申请", "onCreate: " + "权限已经拥有");
             }
         }
     }
 
     /**
      * 权限申请情况回调函数
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults
@@ -439,7 +451,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
                 grantResults[1] != PackageManager.PERMISSION_GRANTED) {
             this.getActivity().onBackPressed();
         } else if (requestCode == FMMapSDK.SDK_PERMISSION_RESULT_CODE) {
-            Log.d("Android 6.0 系统运行时权限申请码", "onCreate: "+" 权限已经拥有");
+            Log.d("Android 6.0 系统运行时权限申请码", "onCreate: " + " 权限已经拥有");
         }
     }
 
@@ -448,7 +460,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
      */
     @Override
     public void onDestroyView() {
-        if(mFmap != null){
+        if (mFmap != null) {
             mFmap.onDestroy();
         }
         super.onDestroyView();
@@ -465,6 +477,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 定位导航事件 导航过程路线和定位图标的更新
+     *
      * @param mapCoord 当前点坐标
      * @param distance 行走距离
      * @param angle    当前点角度
@@ -499,6 +512,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 地图控件状态监听处理
+     *
      * @param view
      * @param isChecked
      */
@@ -653,7 +667,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         Message message = Message.obtain();
         message.what = WHAT_WALKING_ROUTE_LINE;
         message.obj = mapCoord;
-       loadMaphandler.sendMessage(message);
+        loadMaphandler.sendMessage(message);
     }
 
     /**
@@ -717,7 +731,6 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
      * 设置跟随状态
      *
      * @param enable true 跟随  false 不跟随
-     *
      */
     private void setFollowState(boolean enable) {
         mHasFollowed = enable;
@@ -735,26 +748,28 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     /**
      * 主题切换控件，切换地图主题
+     *
      * @param enable
      */
-    private void setTheme(boolean enable){
+    private void setTheme(boolean enable) {
         isThemeCheck = enable;
-        if(isThemeCheck){
+        if (isThemeCheck) {
             mFmap.loadThemeById("3006");
-        }else {
+        } else {
             mFmap.loadThemeById("3008");
         }
     }
 
     /**
      * 起终点路径搜索页面加载
+     *
      * @param enable
      */
-    private void showPathSeachWindow(boolean enable){
+    private void showPathSeachWindow(boolean enable) {
         isPathCheck = enable;
-        if(isPathCheck){
+        if (isPathCheck) {
             showWin.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             showWin.setVisibility(View.INVISIBLE);
         }
     }

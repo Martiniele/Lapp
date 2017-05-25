@@ -1,4 +1,5 @@
 package com.lib.lapp.presenter;
+
 import com.lib.lapp.contract.IMapViewFragment;
 import com.lib.lapp.model.WifiInfo;
 
@@ -11,7 +12,8 @@ import com.lib.lapp.model.WifiInfo;
 public class MapViewPresenterImpl implements IMapViewPresenter {
     private IMapViewFragment iMapViewFragment;
     private WifiInfo wifiInfo;
-    public MapViewPresenterImpl(IMapViewFragment iMapviewfragment){
+
+    public MapViewPresenterImpl(IMapViewFragment iMapviewfragment) {
         this.iMapViewFragment = iMapviewfragment;
     }
 }

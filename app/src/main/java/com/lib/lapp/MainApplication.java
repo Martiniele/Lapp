@@ -1,6 +1,7 @@
 package com.lib.lapp;
 
 import android.app.Application;
+
 import com.fengmap.android.FMMapSDK;
 
 /**

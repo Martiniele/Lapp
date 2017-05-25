@@ -49,13 +49,14 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         rg_tab_bar.setOnCheckedChangeListener(this);   //设置切换监听
         vpager = (ViewPager) findViewById(R.id.vpager); //获取ViewPage资源
         vpager.setAdapter(mAdapter);  //绑定fragment适配器
-        vpager .setOffscreenPageLimit(2);
+        vpager.setOffscreenPageLimit(2);
         vpager.setCurrentItem(0);     //设置初始的Fragment页面为第0页
         vpager.addOnPageChangeListener(this); //设置ViewPage切换监听，即页面切换改变时的监听事件
     }
 
     /**
      * 重载RadioGroup的监听事件方法，实现对切换按钮的事件响应
+     *
      * @param group
      * @param group
      * @param checkedId

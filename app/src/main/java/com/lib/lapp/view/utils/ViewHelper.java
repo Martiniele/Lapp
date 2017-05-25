@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
+
 import com.fengmap.android.map.FMMap;
 import com.fengmap.android.map.geometry.FMMapCoord;
 import com.fengmap.android.map.marker.FMImageMarker;

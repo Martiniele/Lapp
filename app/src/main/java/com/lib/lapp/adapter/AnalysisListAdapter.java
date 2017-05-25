@@ -3,6 +3,7 @@ package com.lib.lapp.adapter;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
+
 import com.fengmap.android.map.FMGroupInfo;
 import com.fengmap.android.map.FMMap;
 import com.fengmap.android.map.FMMapInfo;

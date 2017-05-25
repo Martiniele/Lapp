@@ -8,6 +8,7 @@ package com.lib.lapp.view.utils;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+
 import com.fengmap.android.map.FMMapView;
 
 public class MapViewPagerFixed extends FMMapView {

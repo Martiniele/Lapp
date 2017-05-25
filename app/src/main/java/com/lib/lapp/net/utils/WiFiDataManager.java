@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.widget.Toast;
+
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,7 +39,7 @@ public class WiFiDataManager {
         return wiFiDataManager;
     }
 
-    private WiFiDataManager(Context context){
+    private WiFiDataManager(Context context) {
         this.context = context;
     }
 
@@ -55,7 +56,7 @@ public class WiFiDataManager {
 
     // 设置Timer任务，开始Wifi扫描
     public void startScanWifi() {
-        context.registerReceiver(wifiReceiver,new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+        context.registerReceiver(wifiReceiver, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
         wifiScanTimer = new Timer();
         wifiScanTimerTask = new TimerTask() {
             public void run() {

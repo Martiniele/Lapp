@@ -10,30 +10,33 @@ import android.view.View;
 public class ScreenUtils {
     /**
      * 获取屏幕的高度(px)
+     *
      * @param context
      * @return
      */
-    public static int getScreenHeight(Context context){
+    public static int getScreenHeight(Context context) {
         return context.getResources().getDisplayMetrics().heightPixels;
     }
 
     /**
      * 获取屏幕的宽度(px)
+     *
      * @param context
      * @return
      */
-    public static int getScreenWidth(Context context){
+    public static int getScreenWidth(Context context) {
         return context.getResources().getDisplayMetrics().widthPixels;
     }
 
     /**
      * 计算出来的位置，y方向就在anchorView的上面和下面对齐显示, x方向就是与屏幕右边对齐显示
      * 如果anchorView的位置有变化，就可以适当自己加入额外的偏移来修正
-     * @param anchorView    呼出window的View
-     * @param contentView   window的内容布局
-     * @return    window显示左上角的xoff,yoff坐标
+     *
+     * @param anchorView  呼出window的View
+     * @param contentView window的内容布局
+     * @return window显示左上角的xoff, yoff坐标
      */
-    private static int[] caculatePopWindowPos(final View anchorView, final View contentView){
+    private static int[] caculatePopWindowPos(final View anchorView, final View contentView) {
         final int windowPos[] = new int[2];
         final int anchorLoc[] = new int[2];
 
@@ -41,7 +44,7 @@ public class ScreenUtils {
         final int anchorHeight = anchorView.getHeight();
 
         //获取屏幕的高宽
-        final int screenHeght  = ScreenUtils.getScreenHeight(anchorView.getContext());
+        final int screenHeght = ScreenUtils.getScreenHeight(anchorView.getContext());
         final int screenWidth = ScreenUtils.getScreenWidth(anchorView.getContext());
 
         contentView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -52,10 +55,10 @@ public class ScreenUtils {
 
         //判断需要向上弹出还是向下弹出
         final boolean isNeedShowUp = (screenHeght - anchorLoc[1] - anchorHeight < windowHeight);
-        if(isNeedShowUp){
+        if (isNeedShowUp) {
             windowPos[0] = screenWidth - windowWidth;
             windowPos[1] = anchorLoc[1] - windowHeight;
-        }else {
+        } else {
             windowPos[0] = screenWidth - windowWidth;
             windowPos[1] = anchorLoc[1] + anchorHeight;
         }

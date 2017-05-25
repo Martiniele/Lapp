@@ -3,8 +3,8 @@ package com.lib.lapp.model;
 import com.fengmap.android.map.geometry.FMMapCoord;
 
 /**
- * @Email hezutao@fengmap.com
- * @Version 2.0.0
+ * @author wxx
+ * @Date 2017/04/12
  * @Description 对楼层id和FMMapCoord封装的实体类
  */
 public class MapCoord {

@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.lib.lapp.R;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * Created by wxx on 2017/5/10.
  */
 
-public class GridAdapter extends BaseAdapter{
+public class GridAdapter extends BaseAdapter {
     private ArrayList<String> mNameList = new ArrayList<String>();
     private ArrayList<Drawable> mDrawableList = new ArrayList<Drawable>();
     private LayoutInflater mInflater;
@@ -50,15 +51,13 @@ public class GridAdapter extends BaseAdapter{
     public View getView(int position, View convertView, ViewGroup parent) {
         ItemViewTag viewTag;
 
-        if (convertView == null)
-        {
+        if (convertView == null) {
             convertView = mInflater.inflate(R.layout.fg_persondata_gv_item, null);
 
             // construct an item tag
             viewTag = new ItemViewTag((ImageView) convertView.findViewById(R.id.grid_icon), (TextView) convertView.findViewById(R.id.grid_name));
             convertView.setTag(viewTag);
-        } else
-        {
+        } else {
             viewTag = (ItemViewTag) convertView.getTag();
         }
 
@@ -71,8 +70,7 @@ public class GridAdapter extends BaseAdapter{
         return convertView;
     }
 
-    class ItemViewTag
-    {
+    class ItemViewTag {
         protected ImageView mIcon;
         protected TextView mName;
 
@@ -82,8 +80,7 @@ public class GridAdapter extends BaseAdapter{
          * @param name the name view of the item
          * @param icon the icon view of the item
          */
-        public ItemViewTag(ImageView icon, TextView name)
-        {
+        public ItemViewTag(ImageView icon, TextView name) {
             this.mName = name;
             this.mIcon = icon;
         }

@@ -3,7 +3,9 @@ package com.lib.lapp.adapter;
 import android.content.Context;
 import android.widget.Filter;
 import android.widget.Filterable;
+
 import com.fengmap.android.map.marker.FMModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +61,7 @@ public abstract class CommonFilterAdapter<T> extends CommonAdapter<T> implements
 
         @Override
         public CharSequence convertResultToString(Object resultValue) {
-            if(resultValue instanceof FMModel){
+            if (resultValue instanceof FMModel) {
                 FMModel model = (FMModel) resultValue;
                 return model.getName();
             }

@@ -1,4 +1,5 @@
 package com.lib.lapp.views.fragment;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+
 import com.fengmap.android.analysis.navi.FMNaviAnalyser;
 import com.fengmap.android.analysis.navi.FMNaviResult;
 import com.fengmap.android.analysis.search.FMSearchAnalyser;
@@ -42,6 +44,7 @@ import com.lib.lapp.model.MapCoord;
 import com.lib.lapp.view.utils.ViewHelper;
 import com.lib.lapp.widget.SearchBar;
 import com.yuyh.library.BubblePopupWindow;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,7 +53,7 @@ import java.util.HashMap;
  * @Description 地图页面基类
  * Created by wxx on 2017/3/13.
  */
-public abstract class BaseFragment extends Fragment{
+public abstract class BaseFragment extends Fragment {
 
     protected boolean isViewInitiated;
     protected boolean isVisibleToUser;
@@ -123,7 +126,7 @@ public abstract class BaseFragment extends Fragment{
                     Bundle data = msg.getData();
                     iw_content = (TextView) getActivity().findViewById(R.id.iw_content);
                     iw_content.setMovementMethod(ScrollingMovementMethod.getInstance());
-                    iw_content.setText("FID："+ data.get("FID") +"\n"+"名称："+ data.get("NAME")+"\n"+"类型：" + data.get("TYPE")+"\n"+"面数：两面共6层"+"\n"+"详细信息：计算机，电子工程相关书籍");
+                    iw_content.setText("FID：" + data.get("FID") + "\n" + "名称：" + data.get("NAME") + "\n" + "类型：" + data.get("TYPE") + "\n" + "面数：两面共6层" + "\n" + "详细信息：计算机，电子工程相关书籍");
                     break;
             }
         }
@@ -135,7 +138,7 @@ public abstract class BaseFragment extends Fragment{
     protected OnFMNodeListener mOnModelCLickListener = new OnFMNodeListener() {
         @Override
         public boolean onClick(FMNode node) {
-            if(mLastClicked != null){
+            if (mLastClicked != null) {
                 mLastClicked.setSelected(false);
             }
             FMModel model = (FMModel) node;
@@ -163,6 +166,7 @@ public abstract class BaseFragment extends Fragment{
             showInfoWindow(centerMapCoord, model);
             return true;
         }
+
         @Override
         public boolean onLongPress(FMNode node) {
             return false;
@@ -171,14 +175,15 @@ public abstract class BaseFragment extends Fragment{
 
     /**
      * 更新信息窗的信息
+     *
      * @param model
      */
-    protected void updateInfoWinData(FMModel model){
+    protected void updateInfoWinData(FMModel model) {
         Message msg = new Message();
         msg.what = UPDATE_INFOWINDOW_MSG;
         Bundle data = new Bundle();
         data.putString("FID", String.valueOf(model.getFID()));
-        data.putString("NAME",model.getName());
+        data.putString("NAME", model.getName());
         data.putString("TYPE", String.valueOf(model.getDataType()));
         msg.setData(data);
         mHandler.sendMessage(msg);
@@ -213,6 +218,7 @@ public abstract class BaseFragment extends Fragment{
             FMMapCoord centerMapCoord = facility.getPosition();
             return true;
         }
+
         @Override
         public boolean onLongPress(FMNode node) {
             return false;
@@ -247,6 +253,7 @@ public abstract class BaseFragment extends Fragment{
 
     /**
      * 内部函数
+     *
      * @return
      */
     public boolean prepareFetchData() {
@@ -268,6 +275,7 @@ public abstract class BaseFragment extends Fragment{
 
     /**
      * 清理搜索框焦点
+     *
      * @param model
      */
     protected void clearFocus(FMModel model) {
@@ -331,7 +339,6 @@ public abstract class BaseFragment extends Fragment{
     }
 
 
-
     /**
      * 清除终点图层
      */
@@ -346,7 +353,7 @@ public abstract class BaseFragment extends Fragment{
 
 
     /**
-     *  添加线标注
+     * 添加线标注
      */
     protected void addLineMarker() {
         ArrayList<FMNaviResult> results = mNaviAnalyser.getNaviResults();

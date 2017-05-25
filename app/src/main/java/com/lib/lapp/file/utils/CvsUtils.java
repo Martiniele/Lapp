@@ -1,6 +1,7 @@
 package com.lib.lapp.file.utils;
 
 import android.os.Environment;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -17,15 +18,15 @@ public class CvsUtils {
 
     public static void open() {
         String folderName = null;
-        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             String path = Environment.getExternalStorageDirectory().getAbsolutePath();
             if (path != null) {
-                folderName = path +"/WIFIDATACSV/";
+                folderName = path + "/WIFIDATACSV/";
             }
         }
 
         File fileRobo = new File(folderName);
-        if(!fileRobo.exists()){
+        if (!fileRobo.exists()) {
             fileRobo.mkdir();
         }
         mFileName = folderName + "log.csv";

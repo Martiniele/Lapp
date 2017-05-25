@@ -62,6 +62,7 @@ public class GsonUtils {
     /**
      * 转成list
      * 泛型在编译期类型被擦除导致报错
+     *
      * @param gsonString
      * @param cls
      * @return
@@ -79,6 +80,7 @@ public class GsonUtils {
     /**
      * 转成list
      * 解决泛型问题
+     *
      * @param json
      * @param cls
      * @param <T>
@@ -88,7 +90,7 @@ public class GsonUtils {
         Gson gson = new Gson();
         List<T> list = new ArrayList<T>();
         JsonArray array = new JsonParser().parse(json).getAsJsonArray();
-        for(final JsonElement elem : array){
+        for (final JsonElement elem : array) {
             list.add(gson.fromJson(elem, cls));
         }
         return list;
