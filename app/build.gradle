@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 
 android {
     signingConfigs {
@@ -51,5 +52,9 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.10.19' //单元测试外部依赖
     compile files('libs/fengmap-2.0.10.jar')
     compile 'com.yuyh.bubble:library:1.0.0' //popupwindow外部依赖
-    compile 'com.google.code.gson:gson:2.6.2' //Gson处理Json数据
+    compile 'com.google.code.gson:gson:2.6.2'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version" //Gson处理Json数据
+}
+repositories {
+    mavenCentral()
 }
