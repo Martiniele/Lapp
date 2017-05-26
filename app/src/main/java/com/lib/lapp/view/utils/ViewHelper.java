@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.view.View;
 import android.widget.TextView;
-
 import com.fengmap.android.map.FMMap;
 import com.fengmap.android.map.geometry.FMMapCoord;
 import com.fengmap.android.map.marker.FMImageMarker;
@@ -16,7 +15,6 @@ import com.fengmap.android.map.marker.FMLocationMarker;
 import com.fengmap.android.map.marker.FMSegment;
 import com.fengmap.android.map.marker.FMTextMarker;
 import com.lib.lapp.widget.ImageViewCheckBox;
-
 import java.util.ArrayList;
 
 

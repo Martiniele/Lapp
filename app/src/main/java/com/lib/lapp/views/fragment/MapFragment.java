@@ -17,7 +17,6 @@ import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.fengmap.android.FMDevice;
 import com.fengmap.android.FMErrorMsg;
 import com.fengmap.android.FMMapSDK;
@@ -30,6 +29,7 @@ import com.fengmap.android.map.FMMapUpgradeInfo;
 import com.fengmap.android.map.FMMapView;
 import com.fengmap.android.map.FMPickMapCoordResult;
 import com.fengmap.android.map.FMViewMode;
+import com.fengmap.android.map.animator.FMValueAnimation;
 import com.fengmap.android.map.event.OnFMMapClickListener;
 import com.fengmap.android.map.event.OnFMMapInitListener;
 import com.fengmap.android.map.event.OnFMNodeListener;
@@ -88,7 +88,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
     private volatile boolean isClick = false;
     private boolean isThemeCheck = true;
     private boolean isPathCheck = false;
-
+    private FMValueAnimation mMoveAnimation;         //值动画效果
 
     private Handler loadMaphandler = new Handler() {    //用于延迟加载的子线程
         @Override
@@ -142,6 +142,8 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
     @Override
     public void onMapInitSuccess(String str) {
         mFmap.loadThemeById("3006");
+        initZoomComponent();
+        init3DControllerComponent();
         mFmap.setFMViewMode(FMViewMode.FMVIEW_MODE_3D);
         mImageLayer = mFmap.getFMLayerProxy().createFMImageLayer(mFmap.getFocusGroupId());
         mFmap.addLayer(mImageLayer);
@@ -156,17 +158,13 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         mModelLayer.setOnFMNodeListener(mOnModelCLickListener);
         mFmap.addLayer(mModelLayer);
 
+        //线图层
         mLineLayer = mFmap.getFMLayerProxy().getFMLineLayer();
         mFmap.addLayer(mLineLayer);
 
         //定位层
         mLocationLayer = mFmap.getFMLayerProxy().getFMLocationLayer();
         mFmap.addLayer(mLocationLayer);
-
-        ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_locate, this);
-        ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_view, this);
-        ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_theme, this);
-        ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_path, this);
 
         //导航分析
         try {
@@ -177,6 +175,13 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
             e.printStackTrace();
         }
 
+        //差值动画
+        mLocationAPI = new FMLocationAPI();
+        mLocationAPI.setFMLocationListener(this);
+
+        /*
+            搜索分析数据获取
+         */
         int groupSize = mFmap.getFMMapInfo().getGroupSize();
         for (int i = 0; i < groupSize; i++) {
             int groupId = mFmap.getMapGroupIds()[i];
@@ -191,10 +196,15 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         } catch (FMObjectException e) {
             e.printStackTrace();
         }
-
-        initZoomComponent();
-        init3DControllerComponent();
+        ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_locate, this);
+        ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_view, this);
+        ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_theme, this);
+        ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_path, this);
+        //路径规划
+        analyzeNavigation(lstCoord, lendCoord);
+        mTotalDistance = mNaviAnalyser.getSceneRouteLength();
     }
+
 
     /**
      * 耗时加载地图（处理耗时操作）防止生命周期混乱带来的APP强退情况
@@ -208,6 +218,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
             @Override
             public void onClick(View v) {
                 txt_info.setVisibility(View.VISIBLE);
+                startWalkingRouteLine();
             }
         });
     }
@@ -460,6 +471,15 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
      */
     @Override
     public void onDestroyView() {
+        //停止模拟轨迹动画
+        if (mLocationAPI != null) {
+            mLocationAPI.destroy();
+        }
+        //停止移动动画
+        if (mMoveAnimation != null) {
+            mMoveAnimation.stop();
+        }
+
         if (mFmap != null) {
             mFmap.onDestroy();
         }
@@ -510,6 +530,15 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         setFocusGroupId(focusGroupId);
     }
 
+    @Override
+    protected void setFocusGroupId(int groupId) {
+        if (getFloorControlEnable() && groupId != mFmap.getFocusGroupId()) {
+            mFmap.setFocusByGroupId(groupId, this);
+        }
+        setupTargetLine(groupId);
+    }
+
+
     /**
      * 地图控件状态监听处理
      *
@@ -545,7 +574,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
 
     @Override
     public void afterGroupChanged() {
-
+        mHandler.sendEmptyMessage(WHAT_LOCATE_SWITCH_GROUP);
     }
 
     @Override
@@ -562,8 +591,10 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
      */
     private void updateHandledMarker(FMMapCoord coord, double angle) {
         if (mHandledMarker == null) {
-            mHandledMarker = ViewHelper.buildLocationMarker(lstCoord.getGroupId(),
-                    coord);
+            /**
+             * 创建定位标注
+             */
+            mHandledMarker = ViewHelper.buildLocationMarker(lstCoord.getGroupId(), coord);
             mLocationLayer.addMarker(mHandledMarker);
         } else {
             FMMapCoord mapCoord = makeConstraint(coord);

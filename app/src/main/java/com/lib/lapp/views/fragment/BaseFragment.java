@@ -77,35 +77,37 @@ public abstract class BaseFragment extends Fragment {
     protected FMMapView mMapView;                                                         //地图视图
     protected FMMap mFmap;                                                                //地图控制
 
-
     protected FMMapCoord stCoord;                                                        //起点坐标
-    protected int stGroupId;                                                             //起点楼层
-    protected FMImageLayer stImageLayer;                                                 //起点图层
+    protected int stGroupId;                                                             //起点楼层id
+    protected FMImageLayer stImageLayer;                                                 //起点图片标注图层
     protected FMMapCoord endCoord;                                                       //终点坐标
     protected int endGroupId;                                                            //终点楼层id
     protected FMImageLayer endImageLayer;                                                //终点图片标注图层
     protected FMNodeInfoWindow mInfoWindow = null;                                       //书架信息弹窗
-    protected LayoutInflater inflater;                                                   //获取视图
+    protected LayoutInflater inflater;                                                   //视图获取器
     protected FMImageLayer bookImageLayer;                                               //书架图层添加
     protected FMImageMarker bookMaker;                                                   //书架定位图标
 
-    protected static final int UPDATE_INFOWINDOW_MSG = 3;                                //信息窗信息更新信号
-
-    protected static final int WHAT_WALKING_ROUTE_LINE = 2;                              //行走显示详情
     protected FMLocationMarker mHandledMarker;                                           //约束过的定位标注
     protected FMMapCoord mLastMoveCoord;                                                 //上一次行走坐标
     protected boolean mIsFirstView = true;                                               //是否为第一人称
     protected boolean mHasFollowed = true;                                               //是否为跟随状态
     protected double mTotalDistance;                                                     //总共距离
     protected volatile double mLeftDistance;                                             //剩余距离
-    protected static final int WHAT_LOCATE_SWITCH_GROUP = 1;                             //定位楼层切换
+
     protected FMSwitchFloorComponent mSwitchFloorComponent;                              //楼层切换控件
     protected FMLocationAPI mLocationAPI;                                                //差值动画
 
+    protected static final int UPDATE_INFOWINDOW_MSG = 3;                                //信息窗信息更新信号
+    protected static final int WHAT_WALKING_ROUTE_LINE = 2;                              //行走显示详情
+    protected static final int WHAT_LOCATE_SWITCH_GROUP = 1;                             //定位楼层切换
     protected static final double MAX_BETWEEN_LENGTH = 20;                                 //两个点之间的最大距离为20米
     protected static final int MAP_NORMAL_LEVEL = 20;                                      //进入地图显示级别
+
     protected MapCoord lstCoord = new MapCoord(1, new FMMapCoord(12291225.0, 2914593.5));  //默认起点
     protected MapCoord lendCoord = new MapCoord(1, new FMMapCoord(12291183.0, 2914551.0)); //默认终点
+
+
     protected ArrayList<ArrayList<FMMapCoord>> mNaviPoints = new ArrayList<>();            //导航行走点集合
     protected ArrayList<Integer> mNaviGroupIds = new ArrayList<>();                        //导航行走的楼层集合
     protected int mCurrentIndex = 0;                                                       //导航行走索引
@@ -412,6 +414,100 @@ public abstract class BaseFragment extends Fragment {
             addLineMarker();
         }
     }
+
+    /**
+     * 导航分析
+     */
+    protected void analyzeNavigation(MapCoord stPoint, MapCoord endPoint) {
+        clearImageLayer();
+        // 添加起点图层
+        mStartImageLayer = new FMImageLayer(mFmap, stPoint.getGroupId());
+        mFmap.addLayer(mStartImageLayer);
+        // 标注物样式
+        FMImageMarker imageMarker = ViewHelper.buildImageMarker(getResources(), stPoint.getMapCoord(), R.drawable.ic_nav_start);
+        mStartImageLayer.addMarker(imageMarker);
+
+        // 添加终点图层
+        mEndImageLayer = new FMImageLayer(mFmap, endPoint.getGroupId());
+        mFmap.addLayer(mEndImageLayer);
+        // 标注物样式
+        imageMarker = ViewHelper.buildImageMarker(getResources(), endPoint.getMapCoord(), R.drawable.ic_nav_end);
+        mEndImageLayer.addMarker(imageMarker);
+
+        analyzeNavigation(stPoint.getGroupId(), stPoint.getMapCoord(), endPoint.getGroupId(), endPoint.getMapCoord());
+    }
+
+    /**
+     * 导航分析。
+     *
+     * @param startGroupId 起点所在层
+     * @param startPt      起点坐标
+     * @param endGroupId   终点所在层
+     * @param endPt        终点坐标
+     */
+    protected void analyzeNavigation(int startGroupId, FMMapCoord startPt, int endGroupId, FMMapCoord endPt) {
+        int type = mNaviAnalyser.analyzeNavi(startGroupId, startPt, endGroupId, endPt, FMNaviAnalyser.FMNaviModule.MODULE_SHORTEST);
+        if (type == FMNaviAnalyser.FMRouteCalcuResult.ROUTE_SUCCESS) {
+            fillWithPoints();
+            addLineMarker();
+        }
+    }
+
+    /**
+     * 填充导航线段点
+     */
+    protected void fillWithPoints() {
+        clearWalkPoints();
+
+        //获取路径规划上点集合数据
+        ArrayList<FMNaviResult> results = mNaviAnalyser.getNaviResults();
+        int focusGroupId = Integer.MIN_VALUE;
+        for (FMNaviResult r : results) {
+            int groupId = r.getGroupId();
+            ArrayList<FMMapCoord> points = r.getPointList();
+            //点数据小于2，则为单个数据集合
+            if (points.size() < 2) {
+                continue;
+            }
+            //判断是否为同层导航数据，非同层数据即其他层数据
+            if (focusGroupId == Integer.MIN_VALUE || focusGroupId != groupId) {
+                focusGroupId = groupId;
+                //添加即将行走的楼层与点集合
+                mNaviGroupIds.add(groupId);
+                mNaviPoints.add(points);
+            } else {
+                mNaviPoints.get(mNaviPoints.size() - 1).addAll(points);
+            }
+        }
+    }
+
+    /**
+     * 清空行走的点集合数据
+     */
+    private void clearWalkPoints() {
+        mCurrentIndex = 0;
+        mNaviPoints.clear();
+        mNaviGroupIds.clear();
+    }
+
+
+    /**
+     * 清除图片标注
+     */
+    protected void clearImageLayer() {
+        //清理起点图层
+        if (mStartImageLayer != null) {
+            mStartImageLayer.removeAll();
+            mStartImageLayer = null;
+        }
+
+        //清理终点图层
+        if (mEndImageLayer != null) {
+            mEndImageLayer.removeAll();
+            mEndImageLayer = null;
+        }
+    }
+
 
     /**
      * 判断是否行走到终点

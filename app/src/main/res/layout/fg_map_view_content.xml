@@ -49,7 +49,6 @@
                 android:textColor="@color/tv_line"
                 android:textSize="14sp"
                 android:visibility="invisible"
-                android:text="NIHAO"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true" />
 
