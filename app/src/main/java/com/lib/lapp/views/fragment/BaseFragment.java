@@ -7,12 +7,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.TextView;
-
 import com.fengmap.android.analysis.navi.FMNaviAnalyser;
 import com.fengmap.android.analysis.navi.FMNaviResult;
 import com.fengmap.android.analysis.search.FMSearchAnalyser;
@@ -39,19 +35,18 @@ import com.fengmap.android.widget.FMNodeInfoWindow;
 import com.fengmap.android.widget.FMSwitchFloorComponent;
 import com.fengmap.android.widget.FMZoomComponent;
 import com.lib.lapp.R;
-import com.lib.lapp.location.FMLocationAPI;
+import com.lib.lapp.location.MapLocationAPI;
 import com.lib.lapp.model.MapCoord;
 import com.lib.lapp.view.utils.ViewHelper;
 import com.lib.lapp.widget.SearchBar;
-import com.yuyh.library.BubblePopupWindow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * @author wxx
+ * @Date 2017/03/12
  * @Description 地图页面基类
- * Created by wxx on 2017/3/13.
  */
 public abstract class BaseFragment extends Fragment {
 
@@ -96,7 +91,7 @@ public abstract class BaseFragment extends Fragment {
     protected volatile double mLeftDistance;                                             //剩余距离
 
     protected FMSwitchFloorComponent mSwitchFloorComponent;                              //楼层切换控件
-    protected FMLocationAPI mLocationAPI;                                                //差值动画
+    protected MapLocationAPI mLocationAPI;                                                //差值动画
 
     protected static final int UPDATE_INFOWINDOW_MSG = 3;                                //信息窗信息更新信号
     protected static final int WHAT_WALKING_ROUTE_LINE = 2;                              //行走显示详情
@@ -128,7 +123,11 @@ public abstract class BaseFragment extends Fragment {
                     Bundle data = msg.getData();
                     iw_content = (TextView) getActivity().findViewById(R.id.iw_content);
                     iw_content.setMovementMethod(ScrollingMovementMethod.getInstance());
-                    iw_content.setText("FID：" + data.get("FID") + "\n" + "名称：" + data.get("NAME") + "\n" + "类型：" + data.get("TYPE") + "\n" + "面数：两面共6层" + "\n" + "详细信息：计算机，电子工程相关书籍");
+                    iw_content.setText("FID：" + data.get("FID") + "\n" +
+                            "名称：" + data.get("NAME") + "\n" +
+                            "类型：" + data.get("TYPE") + "\n" +
+                            "面数：两面共6层" + "\n" +
+                            "详细信息：计算机，电子工程相关书籍");
                     break;
             }
         }

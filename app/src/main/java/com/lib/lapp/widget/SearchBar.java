@@ -1,5 +1,4 @@
 package com.lib.lapp.widget;
-
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -14,7 +13,6 @@ import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-
 import com.lib.lapp.R;
 import com.lib.lapp.widget.utils.KeyBoardUtils;
 

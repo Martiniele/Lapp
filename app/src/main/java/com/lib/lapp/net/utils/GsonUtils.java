@@ -127,5 +127,4 @@ public class GsonUtils {
         }
         return map;
     }
-
 }

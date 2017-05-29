@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  * @author wxx
  * @Date 2017/04/14
- * @Description 模拟计算
+ * @Description 模拟导航计算
  */
 public class CalcSimulate {
 

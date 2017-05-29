@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.fengmap.android.FMDevice;
@@ -23,8 +22,6 @@ import com.fengmap.android.FMMapSDK;
 import com.fengmap.android.analysis.navi.FMNaviAnalyser;
 import com.fengmap.android.analysis.search.FMSearchAnalyser;
 import com.fengmap.android.exception.FMObjectException;
-import com.fengmap.android.map.FMMap;
-import com.fengmap.android.map.FMMapCoordZType;
 import com.fengmap.android.map.FMMapUpgradeInfo;
 import com.fengmap.android.map.FMMapView;
 import com.fengmap.android.map.FMPickMapCoordResult;
@@ -32,41 +29,33 @@ import com.fengmap.android.map.FMViewMode;
 import com.fengmap.android.map.animator.FMValueAnimation;
 import com.fengmap.android.map.event.OnFMMapClickListener;
 import com.fengmap.android.map.event.OnFMMapInitListener;
-import com.fengmap.android.map.event.OnFMNodeListener;
 import com.fengmap.android.map.event.OnFMSwitchGroupListener;
 import com.fengmap.android.map.geometry.FMMapCoord;
-import com.fengmap.android.map.geometry.FMScreenCoord;
-import com.fengmap.android.map.layer.FMFacilityLayer;
 import com.fengmap.android.map.layer.FMImageLayer;
-import com.fengmap.android.map.layer.FMModelLayer;
-import com.fengmap.android.map.marker.FMFacility;
 import com.fengmap.android.map.marker.FMImageMarker;
 import com.fengmap.android.map.marker.FMModel;
-import com.fengmap.android.map.marker.FMNode;
 import com.fengmap.android.widget.FM3DControllerButton;
 import com.fengmap.android.widget.FMSwitchFloorComponent;
 import com.fengmap.android.widget.FMZoomComponent;
 import com.lib.lapp.R;
+import com.lib.lapp.adapter.BookSearchAdapter;
 import com.lib.lapp.adapter.SearchBarAdapter;
 import com.lib.lapp.contract.IMapViewFragment;
 import com.lib.lapp.file.utils.FileUtils;
 import com.lib.lapp.location.ConvertUtils;
-import com.lib.lapp.location.FMLocationAPI;
+import com.lib.lapp.location.MapLocationAPI;
 import com.lib.lapp.view.utils.ViewHelper;
 import com.lib.lapp.widget.ImageViewCheckBox;
 import com.lib.lapp.widget.SearchBar;
 import com.lib.lapp.widget.utils.AnalysisUtils;
 import com.lib.lapp.widget.utils.DataloadUtils;
 import com.lib.lapp.widget.utils.KeyBoardUtils;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import at.markushi.ui.CircleButton;
-
 /**
  * @author wxx
- * @date 2017-03-15
+ * @Date 2017-03-15
  * @descripe 负责展示地图及其相关的控件，监听地图的初始化，地图的点击事件，搜索框的搜索事件
  */
 public class MapFragment extends BaseFragment implements OnFMMapInitListener,
@@ -74,13 +63,13 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         OnFMMapClickListener,                             //地图点击事件监听
         SearchBar.OnSearchResultCallback,                 //搜索框事件监听
         AdapterView.OnItemClickListener,                  //搜索结果列表选项点击事件监听
-        FMLocationAPI.OnFMLocationListener,               //定位事件监听
+        MapLocationAPI.OnFMLocationListener,               //定位事件监听
         ImageViewCheckBox.OnCheckStateChangedListener,    //地图控件状态监听
         OnFMSwitchGroupListener {                         //楼层改变的事件监听
 
     private Dialog loadDialog;                          //延时加载
     private View view = null;                           //Fragment的视图
-    private SearchBarAdapter mSearchAdapter;           //搜索框用于处理结果的适配器
+    private BookSearchAdapter mSearchAdapter;           //搜索框用于处理结果的适配器
 
     private Button button;
     private TextView txt_info;
@@ -176,11 +165,11 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         }
 
         //差值动画
-        mLocationAPI = new FMLocationAPI();
+        mLocationAPI = new MapLocationAPI();
         mLocationAPI.setFMLocationListener(this);
 
-        /*
-            搜索分析数据获取
+        /**
+         *  搜索分析数据获取
          */
         int groupSize = mFmap.getFMMapInfo().getGroupSize();
         for (int i = 0; i < groupSize; i++) {
@@ -277,12 +266,19 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         if (!isCompleted) {
             return;
         }
-        ArrayList<FMModel> models = AnalysisUtils.queryModelByKeyword(mFmap, mSearchAnalyser, keyword);
+        //ArrayList<FMModel> models = AnalysisUtils.queryModelByKeyword(mFmap, mSearchAnalyser, keyword);//搜索结果数据集
+        ArrayList<String> datas = new ArrayList<String>();
+        datas.add("C++程序设计与问题求解");
+        datas.add("JAVA程序设计与问题求解");
+        datas.add("Python程序设计与问题求解");
+        datas.add("Go程序设计与问题求解");
+        datas.add("C语言程序设计与问题求解");
+        datas.add("TP9785");
         if (mSearchAdapter == null) {
-            mSearchAdapter = new SearchBarAdapter(getActivity(), models);
+            mSearchAdapter = new BookSearchAdapter(getActivity(), datas);
             mSearchBar.setAdapter(mSearchAdapter);
         } else {
-            mSearchAdapter.setDatas(models);
+            mSearchAdapter.setDatas(datas);
             mSearchAdapter.notifyDataSetChanged();
         }
     }
@@ -518,8 +514,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
             loadMaphandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    String info = getResources().getString(R.string.label_walk_format, 0f,
-                            0, "到达目的地");
+                    String info = getResources().getString(R.string.label_walk_format, 0f, 0, "到达目的地");
                     ViewHelper.setViewText(getActivity(), R.id.txt_info, info);
                 }
             });

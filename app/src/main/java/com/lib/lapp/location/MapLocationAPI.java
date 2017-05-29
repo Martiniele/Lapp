@@ -10,9 +10,9 @@ import java.util.TimerTask;
 /**
  * @author wxx
  * @Date 2017/04/15
- * @Description 模拟数据点
+ * @Description 导航数据点
  */
-public class FMLocationAPI {
+public class MapLocationAPI {
     private OnFMLocationListener mListener;
     private ArrayList<FMMapCoord> mCoordList;   //插值后的点和角度集合
     private double mTotalDistance;
@@ -24,7 +24,7 @@ public class FMLocationAPI {
     private long mDelayTime = 50;
     private int mGroupId = -1;
 
-    public FMLocationAPI() {
+    public MapLocationAPI() {
         this.mTimer = new Timer();
         this.mCoordList = new ArrayList<FMMapCoord>();
     }
