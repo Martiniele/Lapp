@@ -10,9 +10,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
 import org.json.JSONObject;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -22,19 +20,18 @@ import android.util.Log;
 import com.lib.lapp.model.WifiInfo;
 
 /**
- * Created by WXX on 2017/3/17.
+ * @author wxx
+ * @Date 2017/04/12 9:30
+ * @Description 网络请求相关的方法封装
  */
-
 public class AsyncNetUtils {
     public static final String TAG = "AsyncNetUtils";
     private OkHttpClient client;
     private Handler handler;
     //提交字符串数据
-    private static final MediaType MEDIA_TYPE_MARKDOWN = MediaType
-            .parse("text/x-markdown;charset=utf-8");
+    private static final MediaType MEDIA_TYPE_MARKDOWN = MediaType.parse("text/x-markdown;charset=utf-8");
     //提交JSON数据
-    private static final MediaType JSON = MediaType
-            .parse("application/json;charset=utf-8");
+    private static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
 
     private volatile static AsyncNetUtils asyncNetUtils; // 确保线程安全
 
@@ -65,9 +62,7 @@ public class AsyncNetUtils {
      * @param jsonValue
      * @param callBack
      */
-    private void onSuccessJsonStringMethod(final String jsonValue,
-                                           final StringCallBack callBack) {
-        final String F_TAG = "Methoderror";
+    private void onSuccessJsonStringMethod(final String jsonValue, final StringCallBack callBack) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -75,7 +70,6 @@ public class AsyncNetUtils {
                     try {
                         callBack.onResponse(jsonValue);
                     } catch (Exception e) {
-                        Log.e(F_TAG, "onSuccessJsonStringMethod error");
                         e.printStackTrace();
                     }
                 }

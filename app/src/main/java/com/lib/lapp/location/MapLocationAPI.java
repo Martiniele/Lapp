@@ -2,7 +2,6 @@ package com.lib.lapp.location;
 
 import com.fengmap.android.map.geometry.FMMapCoord;
 import com.fengmap.android.utils.FMMath;
-
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -130,7 +129,6 @@ public class MapLocationAPI {
                 if (mListener != null) {
                     mListener.onAnimationUpdate(mCoordList.get(mIndex), mWalkStep, angles[mIndex]);
                 }
-
                 mIndex++;
             }
         };

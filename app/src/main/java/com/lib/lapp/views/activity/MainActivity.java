@@ -1,14 +1,20 @@
 package com.lib.lapp.views.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.lib.lapp.R;
 import com.lib.lapp.adapter.MyFragmentPagerAdapter;
+import com.lib.lapp.views.fragment.PersonFragment;
 
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener,
         ViewPager.OnPageChangeListener {
@@ -22,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
     private MyFragmentPagerAdapter mAdapter; //Fragment适配器
 
+
     //几个代表页面的常量
     public static final int PAGE_ONE = 0; //地图界面标记
     public static final int PAGE_TWO = 1; //导航信息界面标记
@@ -32,9 +39,11 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         mAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         bindViews();
         rb_map_info.setChecked(true);
+        startService(new Intent(MainActivity.this, LocationService.class));
     }
 
     /**
@@ -108,5 +117,11 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(MainActivity.this, LocationService.class));
+        super.onDestroy();
     }
 }

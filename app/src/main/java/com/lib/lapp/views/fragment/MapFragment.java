@@ -70,14 +70,13 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
     private Dialog loadDialog;                          //延时加载
     private View view = null;                           //Fragment的视图
     private BookSearchAdapter mSearchAdapter;           //搜索框用于处理结果的适配器
-
     private Button button;
     private TextView txt_info;
     private View showWin;
     private volatile boolean isClick = false;
     private boolean isThemeCheck = true;
     private boolean isPathCheck = false;
-    private FMValueAnimation mMoveAnimation;         //值动画效果
+    private FMValueAnimation mMoveAnimation;            //值动画效果
 
     private Handler loadMaphandler = new Handler() {    //用于延迟加载的子线程
         @Override
@@ -114,7 +113,6 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         mSearchBar = (SearchBar) view.findViewById(R.id.search);
         mSearchBar.setOnSearchResultCallback(this);
         mSearchBar.setOnItemClickListener(this);
-
         button = (Button) view.findViewById(R.id.pathBtn);
         txt_info = (TextView) view.findViewById(R.id.txt_info);
         txt_info.bringToFront();

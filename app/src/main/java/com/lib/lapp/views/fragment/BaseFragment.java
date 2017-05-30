@@ -274,6 +274,7 @@ public abstract class BaseFragment extends Fragment {
         return false;
     }
 
+
     /**
      * 清理搜索框焦点
      *

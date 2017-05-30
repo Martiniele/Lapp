@@ -1,7 +1,6 @@
 package com.lib.lapp.location;
 
 import com.fengmap.android.map.geometry.FMMapCoord;
-
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -42,7 +41,6 @@ public class CalcSimulate {
      */
     public static void normalizeVec2d(FMMapCoord mapCoord) {
         double norm = lengthVec2d(mapCoord);
-
         if (norm > 0.0) {
             double inv = 1.0 / norm;
             mapCoord.x *= inv;
@@ -58,10 +56,8 @@ public class CalcSimulate {
      */
     public static FMMapCoord calcVerticalNormal(FMMapCoord mapCoord) {
         FMMapCoord vertical = new FMMapCoord();
-
         vertical.x = mapCoord.x * Math.cos(Math.PI / 2) - mapCoord.y * Math.sin(Math.PI / 2);
         vertical.y = mapCoord.x * Math.sin(Math.PI / 2) + mapCoord.y * Math.cos(Math.PI / 2);
-
         normalizeVec2d(vertical);
         return vertical;
     }
