@@ -33,7 +33,7 @@ public class AsyncNetUtils {
     //提交JSON数据
     private static final MediaType JSON = MediaType.parse("application/json;charset=utf-8");
 
-    private volatile static AsyncNetUtils asyncNetUtils; // 确保线程安全
+    private volatile static AsyncNetUtils asyncNetUtils = null; // 确保线程安全
 
     private AsyncNetUtils() {
         client = new OkHttpClient();
@@ -151,7 +151,6 @@ public class AsyncNetUtils {
      *
      * OKHTTP 请求操作
      */
-
 
     /**
      * 异步请求，请求返回Json字符串

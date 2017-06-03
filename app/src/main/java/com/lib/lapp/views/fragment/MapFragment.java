@@ -293,6 +293,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //关闭软键盘
         KeyBoardUtils.closeKeybord(mSearchBar.getCompleteText(), getActivity());
+
         FMModel model = (FMModel) parent.getItemAtPosition(position);
         //切换楼层
         int groupId = model.getGroupId();
@@ -301,6 +302,8 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         }
         //移动至中心点
         FMMapCoord mapCoord = model.getCenterMapCoord();
+        updateInfoWinData(model);
+        showInfoWindow(mapCoord,model);
         mFmap.moveToCenter(mapCoord, false);
         clearImageMarker();
         //添加图片

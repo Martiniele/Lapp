@@ -3,7 +3,6 @@ package com.lib.lapp.adapter;
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
-
 import com.fengmap.android.map.FMGroupInfo;
 import com.fengmap.android.map.FMMap;
 import com.fengmap.android.map.FMMapInfo;
@@ -36,7 +35,6 @@ public class AnalysisListAdapter extends CommonAdapter<FMModel> {
         }
         String name = (position + 1) + "、" + modelName;
         viewHolder.setText(R.id.title, name);
-
         viewHolder.getConvertView().setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View view) {

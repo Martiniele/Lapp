@@ -27,7 +27,7 @@
         android:id="@+id/net_btn"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="网络请求"
+        android:text="定位请求"
         android:background="@color/text_gray"/>
 
     <TextView

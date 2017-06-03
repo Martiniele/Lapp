@@ -77,7 +77,7 @@ public class NavigationFragment extends BaseFragment {
         for (int i = 0; i < goodsNames.length; i++) {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put("image", imgeIDs[i]);               //图片资源
-            map.put("title", "物品名称：");              //物品标题
+            map.put("title", "书架编号：");              //物品标题
             map.put("info", goodsNames[i]);     //物品名称
             map.put("detail", goodsDetails[i]); //物品详情
             listItems.add(map);

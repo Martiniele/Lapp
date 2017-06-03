@@ -9,9 +9,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,16 +28,25 @@ import com.lib.lapp.net.utils.AsyncNetUtils;
 import com.lib.lapp.net.utils.ConfigUrl;
 import com.lib.lapp.views.activity.LocationService;
 
+
 import java.util.Map;
+
+import me.leefeng.promptlibrary.PromptDialog;
+
 
 public class PersonFragment extends BaseFragment {
     public static final int NET_MSG = 1;
     private Button net_btn;
     private Toast toast;
     private TextView txt_content;
-    private MyReceiver receiver = null;
+    private PromptDialog promptDialog;
 
+    //创建对象
+    private MyFragmentReceiver receiver = null;
+    //本地广播管理器
+    private LocalBroadcastManager fLocalBroadcastManager;
     public PersonFragment() {
+
     }
 
     @Override
@@ -42,18 +54,21 @@ public class PersonFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fg_persondata_content, container, false);
         net_btn = (Button) view.findViewById(R.id.net_btn);
         txt_content = (TextView) view.findViewById(R.id.txt_service);
+        promptDialog = new PromptDialog(getActivity());
 
-
+        //设置自定义属性
+        promptDialog.getDefaultBuilder().touchAble(true).round(3).loadingDuration(3000);
         return view;
     }
 
     @Override
     public void onAttach(Context context) {
+        fLocalBroadcastManager = LocalBroadcastManager.getInstance(context);
         //注册广播接收器
-        receiver = new MyReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.lib.lapp.views.activity.LocationService");
-        context.registerReceiver(receiver, filter);
+        receiver = new MyFragmentReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.location.service.WARNNING");
+        fLocalBroadcastManager.registerReceiver(receiver, intentFilter);
         super.onAttach(context);
     }
 
@@ -72,6 +87,7 @@ public class PersonFragment extends BaseFragment {
                     toast = Toast.makeText(getContext(), result, 1000);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
+
                     break;
             }
         }
@@ -118,21 +134,25 @@ public class PersonFragment extends BaseFragment {
 
     @Override
     public void onDestroyView() {
-        getActivity().unregisterReceiver(receiver);
+        fLocalBroadcastManager.unregisterReceiver(receiver);
         super.onDestroyView();
     }
 
     /**
      * 获取广播数据
      *
-     * @author jiqinlin
+     * @author wxx
      */
-    public class MyReceiver extends BroadcastReceiver {
+    public class MyFragmentReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            int count = bundle.getInt("count");
-            txt_content.setText(count + "");
+            switch (intent.getAction()) {
+                case "com.location.service.WARNNING":
+                    Bundle wBundle = intent.getExtras();
+                    String result = wBundle.getString("warnning");
+                    txt_content.setText(result);
+                    break;
+            }
         }
     }
 }

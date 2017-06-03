@@ -1,19 +1,27 @@
 package com.lib.lapp.views.activity;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lib.lapp.R;
 import com.lib.lapp.adapter.MyFragmentPagerAdapter;
+import com.lib.lapp.net.utils.WiFiDataManager;
 import com.lib.lapp.views.fragment.PersonFragment;
 
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener,
@@ -25,9 +33,12 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private RadioButton rb_navication_info; //导航信息界面切换按钮
     private RadioButton rb_person_info;  //个人信息界面切换按钮
     private ViewPager vpager;  //承载切换Fragment的容器
+    private Toolbar p_top_toolbar;
+    private Menu menu_toolbar;
 
     private MyFragmentPagerAdapter mAdapter; //Fragment适配器
 
+    public static final int EXTERNAL_LOCATION_REQ_CODE = 10 ;
 
     //几个代表页面的常量
     public static final int PAGE_ONE = 0; //地图界面标记
@@ -39,10 +50,11 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        requestPermission();
         mAdapter = new MyFragmentPagerAdapter(getSupportFragmentManager());
         bindViews();
         rb_map_info.setChecked(true);
+
         startService(new Intent(MainActivity.this, LocationService.class));
     }
 
@@ -123,5 +135,26 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     protected void onDestroy() {
         stopService(new Intent(MainActivity.this, LocationService.class));
         super.onDestroy();
+    }
+
+    /**
+     * 位置权限请求
+     */
+    public void requestPermission(){
+        //判断当前Activity是否已经获得了该权限
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    EXTERNAL_LOCATION_REQ_CODE);
+            //如果App的权限申请曾经被用户拒绝过，就需要在这里跟用户做出解释
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Toast.makeText(this,"please give me the permission",Toast.LENGTH_SHORT).show();
+            } else {
+                //进行权限请求
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        EXTERNAL_LOCATION_REQ_CODE);
+            }
+        }
     }
 }
