@@ -6,10 +6,13 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
- * Created by WXX on 2017/3/22.
+ * @author wxx
+ * @Date 2017/03/12
+ * @Description 去除切换页面时的视图侧滑效果
  */
 
 public class IndexViewPager extends ViewPager {
+    //侧滑控制变量
     private boolean isCanScroll = false;
 
     public IndexViewPager(Context context) {
