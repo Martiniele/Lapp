@@ -129,6 +129,9 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
     @Override
     public void onMapInitSuccess(String str) {
         mFmap.loadThemeById("3006");
+        if (mSwitchFloorComponent == null) {
+            initSwitchFloorComponent();
+        }
         initZoomComponent();
         init3DControllerComponent();
         mFmap.setFMViewMode(FMViewMode.FMVIEW_MODE_3D);
@@ -264,7 +267,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         if (!isCompleted) {
             return;
         }
-        //ArrayList<FMModel> models = AnalysisUtils.queryModelByKeyword(mFmap, mSearchAnalyser, keyword);//搜索结果数据集
+
         ArrayList<String> datas = new ArrayList<String>();
         datas.add("C++程序设计与问题求解");
         datas.add("JAVA程序设计与问题求解");
@@ -272,11 +275,12 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         datas.add("Go程序设计与问题求解");
         datas.add("C语言程序设计与问题求解");
         datas.add("TP9785");
+        ArrayList<String> info = AnalysisUtils.queryDataByKeyword(datas, keyword);//搜索结果数据集
         if (mSearchAdapter == null) {
-            mSearchAdapter = new BookSearchAdapter(getActivity(), datas);
+            mSearchAdapter = new BookSearchAdapter(getActivity(), info);
             mSearchBar.setAdapter(mSearchAdapter);
         } else {
-            mSearchAdapter.setDatas(datas);
+            mSearchAdapter.setDatas(info);
             mSearchAdapter.notifyDataSetChanged();
         }
     }

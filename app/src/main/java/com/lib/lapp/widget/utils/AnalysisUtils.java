@@ -6,14 +6,17 @@ import com.fengmap.android.analysis.search.model.FMSearchModelByKeywordRequest;
 import com.fengmap.android.analysis.search.model.FMSearchModelByTypeRequest;
 import com.fengmap.android.map.FMMap;
 import com.fengmap.android.map.marker.FMModel;
-
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author wxx
  * @Description 搜素分析
  */
 public class AnalysisUtils {
+
     /**
      * 通过关键字查询模型
      *
@@ -75,6 +78,23 @@ public class AnalysisUtils {
             String fid = (String) r.get("FID");
             FMModel model = map.getFMLayerProxy().queryFMModelByFid(fid);
             list.add(model);
+        }
+        return list;
+    }
+
+    /**
+     * 关键字查询
+     *
+     * @param datas   查询的数据集
+     * @param keyWord 关键字
+     * @return 匹配结果集
+     */
+    public static ArrayList<String> queryDataByKeyword(ArrayList<String> datas, String keyWord) {
+        ArrayList<String> list = new ArrayList<String>();
+        for (String r : datas) {
+            if (r.toLowerCase().contains(keyWord.toLowerCase())) {
+                list.add(r);
+            }
         }
         return list;
     }

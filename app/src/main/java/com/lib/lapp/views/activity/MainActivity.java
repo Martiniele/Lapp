@@ -33,8 +33,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private RadioButton rb_navication_info; //导航信息界面切换按钮
     private RadioButton rb_person_info;  //个人信息界面切换按钮
     private ViewPager vpager;  //承载切换Fragment的容器
-    private Toolbar p_top_toolbar;
-    private Menu menu_toolbar;
 
     private MyFragmentPagerAdapter mAdapter; //Fragment适配器
 

@@ -20,17 +20,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.lib.lapp.R;
 import com.lib.lapp.model.WifiInfo;
 import com.lib.lapp.net.utils.AsyncNetUtils;
 import com.lib.lapp.net.utils.ConfigUrl;
 import com.lib.lapp.views.activity.LocationService;
-
-
 import java.util.Map;
-
 import me.leefeng.promptlibrary.PromptDialog;
 
 
@@ -55,7 +51,6 @@ public class PersonFragment extends BaseFragment {
         net_btn = (Button) view.findViewById(R.id.net_btn);
         txt_content = (TextView) view.findViewById(R.id.txt_service);
         promptDialog = new PromptDialog(getActivity());
-
         //设置自定义属性
         promptDialog.getDefaultBuilder().touchAble(true).round(3).loadingDuration(3000);
         return view;

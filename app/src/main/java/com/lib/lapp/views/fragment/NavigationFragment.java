@@ -10,6 +10,7 @@ import android.widget.ListView;
 import com.lib.lapp.R;
 import com.lib.lapp.adapter.LvBaseAdapter;
 import com.lib.lapp.widget.RefreshableView;
+import com.lib.lapp.widget.mylistview.ZrcListView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class NavigationFragment extends BaseFragment {
     private RefreshableView refreshableView;
     private ListView listView;
+    private ZrcListView zrc_listview;
     private LvBaseAdapter listViewAdapter;
     private List<Map<String, Object>> listItems;
     private Integer[] imgeIDs = {R.drawable.ic_laulogo,
