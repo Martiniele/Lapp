@@ -6,6 +6,8 @@ import com.fengmap.android.analysis.search.model.FMSearchModelByKeywordRequest;
 import com.fengmap.android.analysis.search.model.FMSearchModelByTypeRequest;
 import com.fengmap.android.map.FMMap;
 import com.fengmap.android.map.marker.FMModel;
+import com.lib.lapp.model.Book;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -97,5 +99,21 @@ public class AnalysisUtils {
             }
         }
         return list;
+    }
+
+    /**
+     * 通过关键字查询图书
+     *
+     * @param keyword 关键字
+     * @return
+     */
+    public static ArrayList<Book> queryBookByKeyword(List<Book> books, String keyword) {
+        ArrayList<Book> result = new ArrayList<>();
+        for (Book book : books) {
+            if (book.BOOKNAME.toLowerCase().contains(keyword) || book.BOOKTYPE.toLowerCase().contains(keyword)) {
+                result.add(book);
+            }
+        }
+        return result;
     }
 }

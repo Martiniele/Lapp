@@ -111,11 +111,11 @@ public class LvBaseAdapter extends BaseAdapter {
             listItemView = new ListItemView();
             //获取list_item布局文件的视图
             convertView = listContainer.inflate(R.layout.fg_mapdata_list_item, null);
-            listItemView.image = (ImageView) convertView.findViewById(R.id.imageItem);
-            listItemView.title = (TextView) convertView.findViewById(R.id.titleItem);
-            listItemView.detail = (Button) convertView.findViewById(R.id.detailItem);
-            listItemView.info = (TextView) convertView.findViewById(R.id.infoItem);
-            listItemView.check = (CheckBox) convertView.findViewById(R.id.checkItem);
+//            listItemView.image = (ImageView) convertView.findViewById(R.id.imageItem);
+//            listItemView.title = (TextView) convertView.findViewById(R.id.titleItem);
+//            listItemView.detail = (Button) convertView.findViewById(R.id.detailItem);
+//            listItemView.info = (TextView) convertView.findViewById(R.id.infoItem);
+//            listItemView.check = (CheckBox) convertView.findViewById(R.id.checkItem);
             //设置控件集到convertView
             convertView.setTag(listItemView);
         } else {

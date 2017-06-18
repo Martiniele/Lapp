@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_white"
+    android:background="@color/div_white"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/person_top_bar"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/blue">
+        android:background="@color/bg_white">
 
         <TextView
             android:id="@+id/txt_topbar"
@@ -17,35 +17,44 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="个人中心"
+            android:text="设置中心"
             android:textColor="@color/text_topbar"
-            android:textSize="18sp" />
+            android:textSize="14sp" />
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/net_btn"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="定位请求"
-        android:background="@color/text_gray"/>
+        android:layout_height="20dp"></View>
 
-    <TextView
-        android:id="@+id/txt_service"
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:textColor="@color/text_yellow"
-        android:textSize="20sp" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/net_btn"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:background="@drawable/x_searchpath_by_twopoit_shape"
+            android:text="定位请求"
+            android:textColor="@drawable/x_btn_selector"
+            android:textSize="13sp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="280dp"
+            android:layout_marginRight="280dp" />
+    </RelativeLayout>
+
+
     <GridView
         android:id="@+id/grid"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="382dp"
         android:columnWidth="70dp"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="10dp"
-        android:horizontalSpacing="10dp"
-        android:stretchMode="columnWidth"
         android:gravity="center"
-        />
+        android:horizontalSpacing="10dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="10dp" />
 
 </LinearLayout>

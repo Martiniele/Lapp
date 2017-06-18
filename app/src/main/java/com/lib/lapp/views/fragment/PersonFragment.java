@@ -34,8 +34,8 @@ public class PersonFragment extends BaseFragment {
     public static final int NET_MSG = 1;
     private Button net_btn;
     private Toast toast;
-    private TextView txt_content;
     private PromptDialog promptDialog;
+    private String WIFI_INFO = null;
 
     //创建对象
     private MyFragmentReceiver receiver = null;
@@ -49,7 +49,6 @@ public class PersonFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fg_persondata_content, container, false);
         net_btn = (Button) view.findViewById(R.id.net_btn);
-        txt_content = (TextView) view.findViewById(R.id.txt_service);
         promptDialog = new PromptDialog(getActivity());
         //设置自定义属性
         promptDialog.getDefaultBuilder().touchAble(true).round(3).loadingDuration(3000);
@@ -75,14 +74,13 @@ public class PersonFragment extends BaseFragment {
                 case NET_MSG:
                     Bundle data = msg.getData();
                     String val = data.getString("value");
-                    Gson gson = new Gson();
-                    Map<String, String> map = gson.fromJson(val, Map.class);
+//                    Gson gson = new Gson();
+//                    Map<String, String> map = gson.fromJson(val, Map.class);
                     String result = null;
-                    result = map.get("message");
-                    toast = Toast.makeText(getContext(), result, 1000);
+                    result = val;
+                    toast = Toast.makeText(getContext(), WIFI_INFO, 1000);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
-
                     break;
             }
         }
@@ -104,7 +102,7 @@ public class PersonFragment extends BaseFragment {
                     Message msg = new Message();
                     msg.what = NET_MSG;
                     Bundle data = new Bundle();
-                    data.putString("value", response);
+                    data.putString("value", WIFI_INFO);
                     msg.setData(data);
                     handler.sendMessage(msg);
                 }
@@ -145,7 +143,7 @@ public class PersonFragment extends BaseFragment {
                 case "com.location.service.WARNNING":
                     Bundle wBundle = intent.getExtras();
                     String result = wBundle.getString("warnning");
-                    txt_content.setText(result);
+                    WIFI_INFO = result;
                     break;
             }
         }

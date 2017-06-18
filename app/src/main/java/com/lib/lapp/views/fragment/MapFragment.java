@@ -44,7 +44,11 @@ import com.lib.lapp.contract.IMapViewFragment;
 import com.lib.lapp.file.utils.FileUtils;
 import com.lib.lapp.location.ConvertUtils;
 import com.lib.lapp.location.MapLocationAPI;
+import com.lib.lapp.model.Book;
+import com.lib.lapp.model.BookUtils;
+import com.lib.lapp.model.MapCoord;
 import com.lib.lapp.view.utils.ViewHelper;
+import com.lib.lapp.widget.CompleteTextView;
 import com.lib.lapp.widget.ImageViewCheckBox;
 import com.lib.lapp.widget.SearchBar;
 import com.lib.lapp.widget.utils.AnalysisUtils;
@@ -52,6 +56,9 @@ import com.lib.lapp.widget.utils.DataloadUtils;
 import com.lib.lapp.widget.utils.KeyBoardUtils;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
+
+import me.leefeng.promptlibrary.PromptDialog;
 
 /**
  * @author wxx
@@ -72,11 +79,19 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
     private BookSearchAdapter mSearchAdapter;           //搜索框用于处理结果的适配器
     private Button button;
     private TextView txt_info;
+
+    private CompleteTextView start_point;                //起点框
+    private CompleteTextView end_point;                 //终点框
+
+    private List<Book> books;
+
     private View showWin;
     private volatile boolean isClick = false;
     private boolean isThemeCheck = true;
     private boolean isPathCheck = false;
     private FMValueAnimation mMoveAnimation;            //值动画效果
+
+    private PromptDialog promptDialog;
 
     private Handler loadMaphandler = new Handler() {    //用于延迟加载的子线程
         @Override
@@ -91,6 +106,42 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
                     break;
                 case WHAT_WALKING_ROUTE_LINE:
                     updateWalkRouteLine((FMMapCoord) msg.obj);
+                    break;
+                case BOOK_SEARCH_CODE:
+                    FMMapCoord result_coord = (FMMapCoord) msg.getData().getSerializable("book_mapCoord");
+                    MapCoord end_locate = new MapCoord(1, result_coord);
+                    e_locationCoord = end_locate;
+                    if (s_locationCoord == null || e_locationCoord == null) {
+                        promptDialog.showWarn("点击地图设置起始定位坐标");
+                    }
+
+                    ViewHelper.setViewClickListener(getActivity(), R.id.book_right_btn, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            clearLineLayer();
+                            if (s_locationCoord == null) {
+                                promptDialog.showWarn("点击地图设置起始定位坐标");
+                            } else {
+                                analyzeNavigation(s_locationCoord, e_locationCoord);
+                                mTotalDistance = mNaviAnalyser.getSceneRouteLength();
+                                txt_info.setVisibility(View.VISIBLE);
+                                startWalkingRouteLine();
+                            }
+                        }
+                    });
+
+                    ViewHelper.setViewClickListener(getActivity(), R.id.book_left_btn, new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            if (mInfoWindow.isOpened()) {
+                                mInfoWindow.close();
+                            } else {
+                                mInfoWindow.openOnTarget(mLastClicked);
+                            }
+                            mFmap.updateMap();
+                        }
+                    });
                     break;
             }
         }
@@ -109,6 +160,13 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         if (view == null) {
             view = inflater.inflate(R.layout.fg_map_view_content, container, false);
         }
+
+        //创建对象
+        promptDialog = new PromptDialog(getActivity());
+        //设置自定义属性
+        promptDialog.getDefaultBuilder().touchAble(true).round(3).loadingDuration(3000);
+        start_point = (CompleteTextView) view.findViewById(R.id.start_et_keyword);
+        end_point = (CompleteTextView) view.findViewById(R.id.end_et_keyword);
         mMapView = (FMMapView) view.findViewById(R.id.mapview);
         mSearchBar = (SearchBar) view.findViewById(R.id.search);
         mSearchBar.setOnSearchResultCallback(this);
@@ -121,6 +179,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         return view;
     }
 
+
     /**
      * 地图加载成功时的回调处理
      *
@@ -129,6 +188,8 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
     @Override
     public void onMapInitSuccess(String str) {
         mFmap.loadThemeById("3006");
+        mFmap.setZoomLevel(19, true);
+        mFmap.setRotateAngle((float) -70.25);
         if (mSwitchFloorComponent == null) {
             initSwitchFloorComponent();
         }
@@ -155,6 +216,10 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         //定位层
         mLocationLayer = mFmap.getFMLayerProxy().getFMLocationLayer();
         mFmap.addLayer(mLocationLayer);
+
+        books = BookUtils.getBooks();
+
+
 
         //导航分析
         try {
@@ -186,13 +251,12 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         } catch (FMObjectException e) {
             e.printStackTrace();
         }
+
         ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_locate, this);
         ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_view, this);
         ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_theme, this);
         ViewHelper.setViewCheckedChangeListener(getActivity(), R.id.btn_path, this);
-        //路径规划
-        analyzeNavigation(lstCoord, lendCoord);
-        mTotalDistance = mNaviAnalyser.getSceneRouteLength();
+
     }
 
 
@@ -228,31 +292,44 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         }
 
         txt_info.setVisibility(View.INVISIBLE);
+        clearLineLayer();
 
-        // 起点
-        if (stCoord == null) {
+        if (isPathCheck) {
+            // 起点
+            clearLocationImageLayer();
+
+            if (stCoord == null) {
+                stCoord = mapCoordResult.getMapCoord();
+                stGroupId = mapCoordResult.getGroupId();
+                lstCoord = new MapCoord(stGroupId, stCoord);
+                start_point.setText("起点确定");
+                createStartImageMarker();
+                return;
+            }
+
+            lstCoord = new MapCoord(1, stCoord);
+            // 终点
+            if (endCoord == null) {
+                endCoord = mapCoordResult.getMapCoord();
+                endGroupId = mapCoordResult.getGroupId();
+                lendCoord = new MapCoord(endGroupId, endCoord);
+                end_point.setText("终点确定");
+                createEndImageMarker();
+            }
+            //路径规划
+            if (lstCoord != null && lendCoord != null) {
+                analyzeNavigation(lstCoord, lendCoord);
+                mTotalDistance = mNaviAnalyser.getSceneRouteLength();
+                // 画完置空
+                stCoord = null;
+                endCoord = null;
+            }
+        } else {
+            FMMapCoord locMapCoor = mapCoordResult.getMapCoord();
             clear();
-            stCoord = mapCoordResult.getMapCoord();
-            Log.e("StartX------>", String.valueOf(stCoord.x));
-            Log.e("StartY------>", String.valueOf(stCoord.y));
-            stGroupId = mapCoordResult.getGroupId();
-            createStartImageMarker();
-            return;
+            s_locationCoord = new MapCoord(mapCoordResult.getGroupId(), locMapCoor);
+            createLocationMarker();
         }
-
-        // 终点
-        if (endCoord == null) {
-            endCoord = mapCoordResult.getMapCoord();
-            Log.e("EndX------>", String.valueOf(endCoord.x));
-            Log.e("EndY------>", String.valueOf(endCoord.y));
-            endGroupId = mapCoordResult.getGroupId();
-            createEndImageMarker();
-        }
-        analyzeNavigation();
-        // 画完置空
-        stCoord = null;
-        endCoord = null;
-        mTotalDistance = mNaviAnalyser.getSceneRouteLength();
     }
 
     /**
@@ -268,19 +345,12 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
             return;
         }
 
-        ArrayList<String> datas = new ArrayList<String>();
-        datas.add("C++程序设计与问题求解");
-        datas.add("JAVA程序设计与问题求解");
-        datas.add("Python程序设计与问题求解");
-        datas.add("Go程序设计与问题求解");
-        datas.add("C语言程序设计与问题求解");
-        datas.add("TP9785");
-        ArrayList<String> info = AnalysisUtils.queryDataByKeyword(datas, keyword);//搜索结果数据集
+        ArrayList<Book> bookinfos = AnalysisUtils.queryBookByKeyword(books, keyword);//搜索结果数据集
         if (mSearchAdapter == null) {
-            mSearchAdapter = new BookSearchAdapter(getActivity(), info);
+            mSearchAdapter = new BookSearchAdapter(getActivity(), bookinfos);
             mSearchBar.setAdapter(mSearchAdapter);
         } else {
-            mSearchAdapter.setDatas(info);
+            mSearchAdapter.setDatas(bookinfos);
             mSearchAdapter.notifyDataSetChanged();
         }
     }
@@ -298,7 +368,21 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         //关闭软键盘
         KeyBoardUtils.closeKeybord(mSearchBar.getCompleteText(), getActivity());
 
-        FMModel model = (FMModel) parent.getItemAtPosition(position);
+        Book bookinfo = (Book) parent.getItemAtPosition(position);
+
+        updateInfoWinData(bookinfo);
+        //查找模型
+        FMModel model = mFmap.getFMLayerProxy().queryFMModelByFid(bookinfo.FID);
+
+        if (mLastClicked != null) {
+            mLastClicked.setSelected(false);
+        }
+
+        mLastClicked = model;
+        model.setSelected(true);
+        mFmap.updateMap();
+
+
         //切换楼层
         int groupId = model.getGroupId();
         if (groupId != mFmap.getFocusGroupId()) {
@@ -306,9 +390,15 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
         }
         //移动至中心点
         FMMapCoord mapCoord = model.getCenterMapCoord();
-        updateInfoWinData(model);
-        showInfoWindow(mapCoord,model);
+        Message book_search_msg = new Message();
+        book_search_msg.what = BOOK_SEARCH_CODE;
+        Bundle book_search_info = new Bundle();
+        book_search_info.putSerializable("book_mapCoord", mapCoord);
+        book_search_msg.setData(book_search_info);
+        loadMaphandler.sendMessage(book_search_msg);
         mFmap.moveToCenter(mapCoord, false);
+
+        showInfoWindow(mapCoord, mLastClicked);
         clearImageMarker();
         //添加图片
         FMImageMarker imageMarker = ViewHelper.buildImageMarker(getResources(), mapCoord, R.drawable.ic_nav_end);
@@ -516,6 +606,7 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
     public void onAnimationEnd() {
         if (isWalkComplete()) {
             setStartAnimationEnable(true);
+
             loadMaphandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -594,8 +685,9 @@ public class MapFragment extends BaseFragment implements OnFMMapInitListener,
             /**
              * 创建定位标注
              */
-            mHandledMarker = ViewHelper.buildLocationMarker(lstCoord.getGroupId(), coord);
+            mHandledMarker = ViewHelper.buildLocationMarker(1, coord);
             mLocationLayer.addMarker(mHandledMarker);
+
         } else {
             FMMapCoord mapCoord = makeConstraint(coord);
             if (mIsFirstView && angle != 0) {

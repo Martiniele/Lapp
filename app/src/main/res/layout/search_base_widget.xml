@@ -19,7 +19,7 @@
         android:background="@drawable/x_shape_bg_white"
         android:drawableLeft="@drawable/ic_map_list_search_icon"
         android:drawablePadding="5dp"
-        android:hint="书籍名称/索书号/书架编号"
+        android:hint="输入要搜索的书籍名称"
         android:imeOptions="actionSearch"
         android:inputType="textNoSuggestions"
         android:maxLength="25"

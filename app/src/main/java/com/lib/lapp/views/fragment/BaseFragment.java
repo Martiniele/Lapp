@@ -36,6 +36,7 @@ import com.fengmap.android.widget.FMSwitchFloorComponent;
 import com.fengmap.android.widget.FMZoomComponent;
 import com.lib.lapp.R;
 import com.lib.lapp.location.MapLocationAPI;
+import com.lib.lapp.model.Book;
 import com.lib.lapp.model.MapCoord;
 import com.lib.lapp.view.utils.ViewHelper;
 import com.lib.lapp.widget.SearchBar;
@@ -64,7 +65,9 @@ public abstract class BaseFragment extends Fragment {
     protected FMLineLayer mLineLayer;                                                     //画线图层
     protected FMLocationLayer mLocationLayer;                                             //定位图层
     protected FMImageLayer mImageLayer;                                                   //通用图片标注图层
-    protected FMTextLayer mTextLayer;                                                     //文字图层
+
+    protected FMImageLayer mLocationImageLayer;                                        //定位图标注
+
     protected FMFacilityLayer mFacilityLayer;                                             //公共设施图层
     protected FMModelLayer mModelLayer;                                                   //模型图层
     protected FMNaviAnalyser mNaviAnalyser;                                               //导航分析
@@ -74,12 +77,12 @@ public abstract class BaseFragment extends Fragment {
 
     protected FMMapCoord stCoord;                                                        //起点坐标
     protected int stGroupId;                                                             //起点楼层id
-    protected FMImageLayer stImageLayer;                                                 //起点图片标注图层
+
     protected FMMapCoord endCoord;                                                       //终点坐标
     protected int endGroupId;                                                            //终点楼层id
-    protected FMImageLayer endImageLayer;                                                //终点图片标注图层
+
     protected FMNodeInfoWindow mInfoWindow = null;                                       //书架信息弹窗
-    protected LayoutInflater inflater;                                                   //视图获取器
+
     protected FMImageLayer bookImageLayer;                                               //书架图层添加
     protected FMImageMarker bookMaker;                                                   //书架定位图标
 
@@ -98,10 +101,14 @@ public abstract class BaseFragment extends Fragment {
     protected static final int WHAT_LOCATE_SWITCH_GROUP = 1;                             //定位楼层切换
     protected static final double MAX_BETWEEN_LENGTH = 20;                                 //两个点之间的最大距离为20米
     protected static final int MAP_NORMAL_LEVEL = 20;                                      //进入地图显示级别
+    protected static final int BOOK_SEARCH_CODE = 1008;                                      //进入地图显示级别
 
-    protected MapCoord lstCoord = new MapCoord(1, new FMMapCoord(12291225.0, 2914593.5));  //默认起点
-    protected MapCoord lendCoord = new MapCoord(1, new FMMapCoord(12291183.0, 2914551.0)); //默认终点
+    protected MapCoord lstCoord;                                                            //导航默认起点
+    protected MapCoord lendCoord;                                                          //导航默认终点
 
+    protected MapCoord s_locationCoord;                                                       //初始化定位点
+    protected MapCoord e_locationCoord;                                                       //初始化定位点
+    //= new MapCoord(1, new FMMapCoord(12291225.0, 2914593.5))
 
     protected ArrayList<ArrayList<FMMapCoord>> mNaviPoints = new ArrayList<>();            //导航行走点集合
     protected ArrayList<Integer> mNaviGroupIds = new ArrayList<>();                        //导航行走的楼层集合
@@ -123,11 +130,9 @@ public abstract class BaseFragment extends Fragment {
                     Bundle data = msg.getData();
                     iw_content = (TextView) getActivity().findViewById(R.id.iw_content);
                     iw_content.setMovementMethod(ScrollingMovementMethod.getInstance());
-                    iw_content.setText("FID：" + data.get("FID") + "\n" +
-                            "名称：" + data.get("NAME") + "\n" +
-                            "类型：" + data.get("TYPE") + "\n" +
-                            "面数：两面共6层" + "\n" +
-                            "详细信息：计算机，电子工程相关书籍");
+                    iw_content.setText("书名：" + data.get("BOOKNAME") + "\n" +
+                            "书籍类型：" + data.get("BOOKTYPE") + "\n" +
+                            "存放位置：" + data.get("BOOKADDRAS") + "\n");
                     break;
             }
         }
@@ -138,36 +143,36 @@ public abstract class BaseFragment extends Fragment {
      */
     protected OnFMNodeListener mOnModelCLickListener = new OnFMNodeListener() {
         @Override
+
         public boolean onClick(FMNode node) {
-            if (mLastClicked != null) {
-                mLastClicked.setSelected(false);
-            }
-            FMModel model = (FMModel) node;
-            mLastClicked = model;
-            model.setSelected(true);
-            mFmap.updateMap();
-            FMMapCoord centerMapCoord = model.getCenterMapCoord();
-
-            int groupId = mFmap.getFocusGroupId();
-            clearBookImageLayer();
-            //获取图片图层
-            bookImageLayer = mFmap.getFMLayerProxy().createFMImageLayer(groupId);
-            mFmap.addLayer(bookImageLayer);
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_marker_blue);
-            bookMaker = new FMImageMarker(centerMapCoord, bitmap);
-
-            //设置图片宽高
-            bookMaker.setMarkerWidth(90);
-            bookMaker.setMarkerHeight(90);
-            bookMaker.setCustomOffsetHeight(3);
-            //设置图片在模型之上
-            bookMaker.setFMImageMarkerOffsetMode(FMImageMarker.FMImageMarkerOffsetMode.FMNODE_CUSTOM_HEIGHT);
-            bookImageLayer.addMarker(bookMaker);
-            updateInfoWinData(model);
-            showInfoWindow(centerMapCoord, model);
-            return true;
+//            if (mLastClicked != null) {
+//                mLastClicked.setSelected(false);
+//            }
+//            FMModel model = (FMModel) node;
+//            mLastClicked = model;
+//            model.setSelected(true);
+//            mFmap.updateMap();
+//            FMMapCoord centerMapCoord = model.getCenterMapCoord();
+//
+//            int groupId = mFmap.getFocusGroupId();
+//            clearBookImageLayer();
+//            //获取图片图层
+//            bookImageLayer = mFmap.getFMLayerProxy().createFMImageLayer(groupId);
+//            mFmap.addLayer(bookImageLayer);
+//            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.ic_marker_blue);
+//            bookMaker = new FMImageMarker(centerMapCoord, bitmap);
+//
+//            //设置图片宽高
+//            bookMaker.setMarkerWidth(90);
+//            bookMaker.setMarkerHeight(90);
+//            bookMaker.setCustomOffsetHeight(3);
+//            //设置图片在模型之上
+//            bookMaker.setFMImageMarkerOffsetMode(FMImageMarker.FMImageMarkerOffsetMode.FMNODE_CUSTOM_HEIGHT);
+//            bookImageLayer.addMarker(bookMaker);
+            //mupdateInfoWinData(model);
+            //showInfoWindow(centerMapCoord, model);
+            return false;
         }
-
         @Override
         public boolean onLongPress(FMNode node) {
             return false;
@@ -177,15 +182,31 @@ public abstract class BaseFragment extends Fragment {
     /**
      * 更新信息窗的信息
      *
-     * @param model
+     * @param book
      */
-    protected void updateInfoWinData(FMModel model) {
+    protected void updateInfoWinData(Book book) {
         Message msg = new Message();
         msg.what = UPDATE_INFOWINDOW_MSG;
         Bundle data = new Bundle();
-        data.putString("FID", String.valueOf(model.getFID()));
-        data.putString("NAME", model.getName());
-        data.putString("TYPE", String.valueOf(model.getDataType()));
+        data.putString("BOOKNAME", book.BOOKNAME);
+        data.putString("BOOKTYPE", book.BOOKTYPE);
+        data.putString("BOOKADDRAS", book.BOOKADDR + book.BOOKMIAN + "面" + "第" + book.BOOKCENG + "层");
+        msg.setData(data);
+        mHandler.sendMessage(msg);
+    }
+
+    /**
+     * 更新信息窗的信息
+     *
+     * @param model
+     */
+    protected void mupdateInfoWinData(FMModel model) {
+        Message msg = new Message();
+        msg.what = UPDATE_INFOWINDOW_MSG;
+        Bundle data = new Bundle();
+        data.putString("BOOKNAME", model.getName());
+        data.putString("BOOKTYPE", String.valueOf(model.getFMNodeType()));
+        data.putString("BOOKADDRAS", model.getFID());
         msg.setData(data);
         mHandler.sendMessage(msg);
     }
@@ -225,6 +246,7 @@ public abstract class BaseFragment extends Fragment {
             return false;
         }
     };
+
 
 
     @Override
@@ -303,9 +325,11 @@ public abstract class BaseFragment extends Fragment {
      * 清理所有的线与图层
      */
     protected void clear() {
+        clearLocationImageLayer();
         clearLineLayer();
         clearStartImageLayer();
         clearEndImageLayer();
+        clearImageMarker();
     }
 
 
@@ -333,10 +357,10 @@ public abstract class BaseFragment extends Fragment {
      * 清除起点图层
      */
     protected void clearStartImageLayer() {
-        if (stImageLayer != null) {
-            stImageLayer.removeAll();
-            mFmap.removeLayer(stImageLayer); // 移除图层
-            stImageLayer = null;
+        //清理起点图层
+        if (mStartImageLayer != null) {
+            mStartImageLayer.removeAll();
+            mStartImageLayer = null;
         }
     }
 
@@ -345,11 +369,10 @@ public abstract class BaseFragment extends Fragment {
      * 清除终点图层
      */
     protected void clearEndImageLayer() {
-        if (endImageLayer != null) {
-            endImageLayer.removeAll();
-            mFmap.removeLayer(endImageLayer); // 移除图层
-
-            endImageLayer = null;
+        //清理终点图层
+        if (mEndImageLayer != null) {
+            mEndImageLayer.removeAll();
+            mEndImageLayer = null;
         }
     }
 
@@ -378,14 +401,11 @@ public abstract class BaseFragment extends Fragment {
     protected void createStartImageMarker() {
         clearStartImageLayer();
         // 添加起点图层
-        stImageLayer = new FMImageLayer(mFmap, stGroupId);
-        mFmap.addLayer(stImageLayer);
+        mStartImageLayer = new FMImageLayer(mFmap, lstCoord.getGroupId());
+        mFmap.addLayer(mStartImageLayer);
         // 标注物样式
-        FMImageMarker imageMarker = ViewHelper.buildImageMarker(getResources(), stCoord, R.drawable.ic_nav_start);
-        imageMarker.setCustomOffsetHeight(2);
-        //设置图片在模型之上
-        imageMarker.setFMImageMarkerOffsetMode(FMImageMarker.FMImageMarkerOffsetMode.FMNODE_CUSTOM_HEIGHT);
-        stImageLayer.addMarker(imageMarker);
+        FMImageMarker imageMarker = ViewHelper.buildImageMarker(getResources(), lstCoord.getMapCoord(), R.drawable.ic_nav_start);
+        mStartImageLayer.addMarker(imageMarker);
     }
 
     /**
@@ -393,47 +413,30 @@ public abstract class BaseFragment extends Fragment {
      */
     protected void createEndImageMarker() {
         clearEndImageLayer();
-        // 添加起点图层
-        endImageLayer = new FMImageLayer(mFmap, endGroupId);
-        mFmap.addLayer(endImageLayer);
+        // 添加终点图层
+        mEndImageLayer = new FMImageLayer(mFmap, lendCoord.getGroupId());
+        mFmap.addLayer(mEndImageLayer);
         // 标注物样式
-        FMImageMarker imageMarker = ViewHelper.buildImageMarker(getResources(), endCoord, R.drawable.ic_nav_end);
-        imageMarker.setCustomOffsetHeight(2);
-        //设置图片在模型之上
-        imageMarker.setFMImageMarkerOffsetMode(FMImageMarker.FMImageMarkerOffsetMode.FMNODE_CUSTOM_HEIGHT);
-        endImageLayer.addMarker(imageMarker);
+        FMImageMarker imageMarker = ViewHelper.buildImageMarker(getResources(), lendCoord.getMapCoord(), R.drawable.ic_nav_end);
+        mEndImageLayer.addMarker(imageMarker);
     }
 
-    /**
-     * 开始分析导航
-     */
-    protected void analyzeNavigation() {
-        int type = mNaviAnalyser.analyzeNavi(stGroupId, stCoord, endGroupId, endCoord,
-                FMNaviAnalyser.FMNaviModule.MODULE_SHORTEST);
-        if (type == FMNaviAnalyser.FMRouteCalcuResult.ROUTE_SUCCESS) {
-            addLineMarker();
-        }
+    protected void createLocationMarker() {
+        clearLocationImageLayer();
+        clearStartImageLayer();
+        clearEndImageLayer();
+        clearLineLayer();
+        mLocationImageLayer = new FMImageLayer(mFmap, s_locationCoord.getGroupId());
+        mFmap.addLayer(mLocationImageLayer);
+
+        FMImageMarker imageMarker = ViewHelper.buildImageMarker(getResources(), s_locationCoord.getMapCoord(), R.drawable.ic_nav_start);
+        mLocationImageLayer.addMarker(imageMarker);
     }
 
     /**
      * 导航分析
      */
     protected void analyzeNavigation(MapCoord stPoint, MapCoord endPoint) {
-        clearImageLayer();
-        // 添加起点图层
-        mStartImageLayer = new FMImageLayer(mFmap, stPoint.getGroupId());
-        mFmap.addLayer(mStartImageLayer);
-        // 标注物样式
-        FMImageMarker imageMarker = ViewHelper.buildImageMarker(getResources(), stPoint.getMapCoord(), R.drawable.ic_nav_start);
-        mStartImageLayer.addMarker(imageMarker);
-
-        // 添加终点图层
-        mEndImageLayer = new FMImageLayer(mFmap, endPoint.getGroupId());
-        mFmap.addLayer(mEndImageLayer);
-        // 标注物样式
-        imageMarker = ViewHelper.buildImageMarker(getResources(), endPoint.getMapCoord(), R.drawable.ic_nav_end);
-        mEndImageLayer.addMarker(imageMarker);
-
         analyzeNavigation(stPoint.getGroupId(), stPoint.getMapCoord(), endPoint.getGroupId(), endPoint.getMapCoord());
     }
 
@@ -450,6 +453,26 @@ public abstract class BaseFragment extends Fragment {
         if (type == FMNaviAnalyser.FMRouteCalcuResult.ROUTE_SUCCESS) {
             fillWithPoints();
             addLineMarker();
+        }
+    }
+
+    /**
+     * 清除定位图层
+     */
+    protected void clearLocationImageLayer() {
+        if (mLocationImageLayer != null) {
+            mLocationImageLayer.removeAll();
+            mFmap.removeLayer(mLocationImageLayer); // 移除图层
+            mLocationImageLayer = null;
+        }
+    }
+
+    //清除导航定位图层
+    protected void clearLocationLayer() {
+        if (mLocationLayer != null) {
+            mLocationLayer.removeAll();
+            mFmap.removeLayer(mLocationLayer); // 移除图层
+            mLocationLayer = null;
         }
     }
 
@@ -583,7 +606,6 @@ public abstract class BaseFragment extends Fragment {
             mFmap.setFocusByGroupId(groupId, null);
             mHandler.sendEmptyMessage(WHAT_LOCATE_SWITCH_GROUP);
         }
-
         setupTargetLine(groupId);
     }
 

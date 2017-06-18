@@ -30,7 +30,7 @@
             android:background="@drawable/x_book_leftbtn_show_shape"
             android:textColor="@drawable/x_btn_selector"
             android:textSize="10sp"
-            android:text="查看书籍" />
+            android:text="结束导航" />
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"

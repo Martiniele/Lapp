@@ -23,19 +23,22 @@
             android:id="@+id/rb_map_info"
             style="@style/tab_menu_item"
             android:drawableTop="@drawable/x_tab_menu_channel"
-            android:text="@string/tab_menu_alert" />
+            android:text="@string/tab_menu_alert"
+            android:textSize="10sp" />
 
         <RadioButton
             android:id="@+id/rb_navication_info"
             style="@style/tab_menu_item"
             android:drawableTop="@drawable/x_tab_menu_setting"
-            android:text="@string/tab_menu_setting" />
+            android:text="@string/tab_menu_setting"
+            android:textSize="10sp" />
 
         <RadioButton
             android:id="@+id/rb_person_info"
             style="@style/tab_menu_item"
             android:drawableTop="@drawable/x_tab_menu_better"
-            android:text="@string/tab_menu_pay" />
+            android:text="@string/tab_menu_pay"
+            android:textSize="10sp" />
     </RadioGroup>
 
     <View
